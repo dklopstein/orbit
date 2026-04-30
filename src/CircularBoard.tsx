@@ -14,6 +14,13 @@ const CircularBoard: React.FC = () => {
     const [x, y] = COORDINATES[key];
     const player = board[key];
     const isWinningMove = winningMoves?.includes(key);
+    
+    // Parse ring number (r1, r2, r3, r4)
+    const ring = parseInt(key.slice(1, 2));
+    const scales = [0, 0.45, 0.9, 1.3, 1.7]; // index 1-4
+    const hitRadii = [0, 18, 28, 32, 36];
+    const markerScale = scales[ring];
+    const hitRadius = hitRadii[ring];
 
     return (
       <g 
@@ -23,21 +30,25 @@ const CircularBoard: React.FC = () => {
         className="cursor-pointer group"
       >
         {/* Hit area */}
-        <circle r="28" fill="transparent" className="group-hover:fill-gray-100/20" />
+        <circle r={hitRadius} fill="transparent" className="group-hover:fill-gray-100/20" />
         
-        {player === 'x' && (
-          <g stroke={isWinningMove ? "#ef4444" : "#374151"} strokeWidth="5" strokeLinecap="round">
-            <line x1="-12" y1="-12" x2="12" y2="12" />
-            <line x1="12" y1="-12" x2="-12" y2="12" />
+        {player && (
+          <g transform={`scale(${markerScale})`}>
+            {player === 'x' && (
+              <g stroke={isWinningMove ? "#ef4444" : "#374151"} strokeWidth="5" strokeLinecap="round">
+                <line x1="-12" y1="-12" x2="12" y2="12" />
+                <line x1="12" y1="-12" x2="-12" y2="12" />
+              </g>
+            )}
+            {player === 'o' && (
+              <circle 
+                r="14" 
+                fill="none" 
+                stroke={isWinningMove ? "#3b82f6" : "#374151"} 
+                strokeWidth="5" 
+              />
+            )}
           </g>
-        )}
-        {player === 'o' && (
-          <circle 
-            r="14" 
-            fill="none" 
-            stroke={isWinningMove ? "#3b82f6" : "#374151"} 
-            strokeWidth="5" 
-          />
         )}
       </g>
     );
