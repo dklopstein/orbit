@@ -23,23 +23,20 @@ const CircularBoard: React.FC = () => {
         className="cursor-pointer group"
       >
         {/* Hit area */}
-        <circle r="25" fill="transparent" className="group-hover:fill-gray-100/20" />
+        <circle r="28" fill="transparent" className="group-hover:fill-gray-100/20" />
         
-        {/* Placeholder circle for the cell */}
-        <circle r="20" fill="none" stroke="#ddd" strokeWidth="1" />
-
         {player === 'x' && (
-          <g stroke={isWinningMove ? "red" : "black"} strokeWidth="4" strokeLinecap="round">
-            <line x1="-10" y1="-10" x2="10" y2="10" />
-            <line x1="10" y1="-10" x2="-10" y2="10" />
+          <g stroke={isWinningMove ? "#ef4444" : "#374151"} strokeWidth="5" strokeLinecap="round">
+            <line x1="-12" y1="-12" x2="12" y2="12" />
+            <line x1="12" y1="-12" x2="-12" y2="12" />
           </g>
         )}
         {player === 'o' && (
           <circle 
-            r="12" 
+            r="14" 
             fill="none" 
-            stroke={isWinningMove ? "blue" : "black"} 
-            strokeWidth="4" 
+            stroke={isWinningMove ? "#3b82f6" : "#374151"} 
+            strokeWidth="5" 
           />
         )}
       </g>
@@ -48,9 +45,9 @@ const CircularBoard: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800">Circle Tic-Tac-Toe</h1>
+      <h1 className="text-4xl font-bold mb-8 text-gray-800 tracking-tight">Circle Tic-Tac-Toe</h1>
       
-      <div className="mb-4 text-xl font-semibold">
+      <div className="mb-6 text-2xl font-bold h-8">
         {winner ? (
           winner === 'tie' ? (
             <span className="text-orange-600">It's a Tie!</span>
@@ -60,22 +57,25 @@ const CircularBoard: React.FC = () => {
             </span>
           )
         ) : (
-          <span>Player {turn.toUpperCase()}'s Turn</span>
+          <span className="text-gray-600">Player {turn.toUpperCase()}'s Turn</span>
         )}
       </div>
 
-      <div className="relative bg-white rounded-full shadow-2xl p-4">
+      <div className="relative bg-white rounded-full shadow-2xl p-6 border-4 border-gray-100">
         <svg width="500" height="500" viewBox="0 0 500 500">
-          {/* Static Board Lines (simplified) */}
-          <circle cx="250" cy="250" r="60" fill="none" stroke="#eee" strokeWidth="2" />
-          <circle cx="250" cy="250" r="120" fill="none" stroke="#eee" strokeWidth="2" />
-          <circle cx="250" cy="250" r="170" fill="none" stroke="#eee" strokeWidth="2" />
-          <circle cx="250" cy="250" r="220" fill="none" stroke="#eee" strokeWidth="2" />
+          {/* Concentric Rings */}
+          <circle cx="250" cy="250" r="60" fill="none" stroke="#f3f4f6" strokeWidth="3" />
+          <circle cx="250" cy="250" r="120" fill="none" stroke="#f3f4f6" strokeWidth="3" />
+          <circle cx="250" cy="250" r="175" fill="none" stroke="#f3f4f6" strokeWidth="3" />
+          <circle cx="250" cy="250" r="230" fill="none" stroke="#f3f4f6" strokeWidth="3" />
           
-          {/* Radial Lines */}
-          <line x1="250" y1="30" x2="250" y2="470" stroke="#eee" strokeWidth="2" />
-          <line x1="50" y1="150" x2="450" y2="350" stroke="#eee" strokeWidth="2" />
-          <line x1="50" y1="350" x2="450" y2="150" stroke="#eee" strokeWidth="2" />
+          {/* 8 Slices (4 Lines) */}
+          <g stroke="#f3f4f6" strokeWidth="3">
+            <line x1="250" y1="20" x2="250" y2="480" /> {/* N-S */}
+            <line x1="20" y1="250" x2="480" y2="250" /> {/* E-W */}
+            <line x1="87" y1="87" x2="413" y2="413" />   {/* NW-SE */}
+            <line x1="87" y1="413" x2="413" y2="87" />   {/* SW-NE */}
+          </g>
 
           {/* Winning Line */}
           {winningMoves && (
@@ -87,8 +87,8 @@ const CircularBoard: React.FC = () => {
                 })
                 .join(' ')}
               fill="none"
-              stroke="rgba(0,0,0,0.2)"
-              strokeWidth="8"
+              stroke="rgba(0,0,0,0.1)"
+              strokeWidth="12"
               strokeLinejoin="round"
               strokeLinecap="round"
             />
@@ -101,7 +101,7 @@ const CircularBoard: React.FC = () => {
 
       <button
         onClick={resetGame}
-        className="mt-8 px-8 py-3 bg-indigo-600 text-white rounded-full font-bold shadow-lg hover:bg-indigo-700 transition-colors"
+        className="mt-10 px-10 py-4 bg-gray-900 text-white rounded-2xl font-bold shadow-xl hover:bg-gray-800 transition-all transform hover:scale-105 active:scale-95"
       >
         Restart Game
       </button>
