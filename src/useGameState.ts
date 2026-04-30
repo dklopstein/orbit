@@ -8,11 +8,13 @@ export const useGameState = () => {
   const [winner, setWinner] = useState<Player | 'tie' | null>(null);
   const [winningMoves, setWinningMoves] = useState<readonly LocationKey[] | null>(null);
 
+  const [winningType, setWinningType] = useState<string | null>(null);
+
   const checkWinner = useCallback((currentBoard: BoardState) => {
-    for (const moves of Object.values(WIN_CONDITIONS)) {
+    for (const [condition, moves] of Object.entries(WIN_CONDITIONS)) {
       const p1 = currentBoard[moves[0] as LocationKey];
       if (p1 && moves.every(move => currentBoard[move as LocationKey] === p1)) {
-        return { winner: p1, moves: moves as readonly LocationKey[] };
+        return { winner: p1, moves: moves as readonly LocationKey[], type: condition };
       }
     }
 
@@ -32,6 +34,7 @@ export const useGameState = () => {
     if (winResult) {
       setWinner(winResult.winner);
       setWinningMoves(winResult.moves);
+      setWinningType(winResult.type || null);
     } else {
       setTurn(prev => (prev === 'x' ? 'o' : 'x'));
     }
@@ -42,6 +45,7 @@ export const useGameState = () => {
     setTurn('x');
     setWinner(null);
     setWinningMoves(null);
+    setWinningType(null);
   }, []);
 
   return {
@@ -49,6 +53,7 @@ export const useGameState = () => {
     turn,
     winner,
     winningMoves,
+    winningType,
     playMove,
     resetGame,
   };
