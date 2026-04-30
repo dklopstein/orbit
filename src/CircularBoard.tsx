@@ -60,13 +60,32 @@ const CircularBoard: React.FC = () => {
     });
 
     if (winningType.startsWith('spiral')) {
-      // Cubic Bezier curve for spiral
-      return `M ${pts[0].x},${pts[0].y} C ${pts[1].x},${pts[1].y} ${pts[2].x},${pts[2].y} ${pts[3].x},${pts[3].y}`;
+      // Catmull-Rom to Cubic Bezier spline through 4 points
+      // We need virtual P-1 and P4 for tangents
+      const pMinus1 = { x: 2 * pts[0].x - pts[1].x, y: 2 * pts[0].y - pts[1].y };
+      const p4 = { x: 2 * pts[3].x - pts[2].x, y: 2 * pts[3].y - pts[2].y };
+      const fullPts = [pMinus1, ...pts, p4];
+
+      let d = `M ${pts[0].x},${pts[0].y}`;
+      for (let i = 1; i < fullPts.length - 2; i++) {
+        const p0 = fullPts[i - 1];
+        const p1 = fullPts[i];
+        const p2 = fullPts[i + 1];
+        const p3 = fullPts[i + 2];
+
+        const cp1x = p1.x + (p2.x - p0.x) / 6;
+        const cp1y = p1.y + (p2.y - p0.y) / 6;
+        const cp2x = p2.x - (p3.x - p1.x) / 6;
+        const cp2y = p2.y - (p3.y - p1.y) / 6;
+
+        d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
+      }
+      return d;
     }
 
     if (winningType.startsWith('circular')) {
-      // For circular, we could use the radius of the ring to draw an arc path.
-      // But for now, we'll keep the polyline as it's cleaner for wrapping wins.
+      // Keep polyline for circular for now as wrap-around arc math is complex,
+      // but if we wanted smooth, we'd use SVG Arc commands.
     }
 
     return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
@@ -90,8 +109,8 @@ const CircularBoard: React.FC = () => {
         )}
       </div>
 
-      <div className="relative bg-white rounded-full shadow-2xl overflow-hidden">
-        <svg width="470" height="470" viewBox="15 15 470 470">
+      <div className="relative shadow-2xl rounded-full overflow-hidden leading-[0]">
+        <svg width="460" height="460" viewBox="20 20 460 460" className="bg-white">
           {/* Concentric Rings */}
           <circle cx="250" cy="250" r="60" fill="none" stroke="#f3f4f6" strokeWidth="3" />
           <circle cx="250" cy="250" r="120" fill="none" stroke="#f3f4f6" strokeWidth="3" />
