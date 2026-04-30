@@ -1,5 +1,6 @@
 import React from 'react';
-import { COORDINATES, LocationKey, Player } from './constants';
+import { COORDINATES } from './constants';
+import type { LocationKey } from './constants';
 import { useGameState } from './useGameState';
 
 const CircularBoard: React.FC = () => {

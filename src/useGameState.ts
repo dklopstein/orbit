@@ -1,17 +1,18 @@
-import { useState, useCallback, useMemo } from 'react';
-import { LocationKey, Player, BoardState, WIN_CONDITIONS, COORDINATES } from './constants';
+import { useState, useCallback } from 'react';
+import { WIN_CONDITIONS, COORDINATES } from './constants';
+import type { LocationKey, Player, BoardState } from './constants';
 
 export const useGameState = () => {
   const [board, setBoard] = useState<BoardState>({});
   const [turn, setTurn] = useState<Player>('x');
   const [winner, setWinner] = useState<Player | 'tie' | null>(null);
-  const [winningMoves, setWinningMoves] = useState<LocationKey[] | null>(null);
+  const [winningMoves, setWinningMoves] = useState<readonly LocationKey[] | null>(null);
 
   const checkWinner = useCallback((currentBoard: BoardState) => {
-    for (const [condition, moves] of Object.entries(WIN_CONDITIONS)) {
+    for (const moves of Object.values(WIN_CONDITIONS)) {
       const p1 = currentBoard[moves[0] as LocationKey];
       if (p1 && moves.every(move => currentBoard[move as LocationKey] === p1)) {
-        return { winner: p1, moves: moves as LocationKey[] };
+        return { winner: p1, moves: moves as readonly LocationKey[] };
       }
     }
 
