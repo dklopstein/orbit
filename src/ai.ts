@@ -38,50 +38,55 @@ export const evaluateBoard = (board: BoardState): number => {
   return score;
 };
 
-const minimax = (
-  board: BoardState,
-  depth: number,
-  alpha: number,
-  beta: number,
-  isMaximizing: boolean
-): number => {
-  const score = evaluateBoard(board);
-  if (Math.abs(score) >= 1000000 || depth === 0) return score;
-
-  if (isMaximizing) {
-    let maxEval = -Infinity;
-    for (let i = 0; i < ALL_MOVES.length; i++) {
-      const move = ALL_MOVES[i];
-      if (board[move]) continue;
-      
-      board[move] = AI_PLAYER;
-      const ev = minimax(board, depth - 1, alpha, beta, false);
-      delete board[move];
-      
-      if (ev > maxEval) maxEval = ev;
-      if (ev > alpha) alpha = ev;
-      if (beta <= alpha) break;
-    }
-    return maxEval === -Infinity ? 0 : maxEval;
-  } else {
-    let minEval = Infinity;
-    for (let i = 0; i < ALL_MOVES.length; i++) {
-      const move = ALL_MOVES[i];
-      if (board[move]) continue;
-
-      board[move] = HUMAN_PLAYER;
-      const ev = minimax(board, depth - 1, alpha, beta, true);
-      delete board[move];
-      
-      if (ev < minEval) minEval = ev;
-      if (ev < beta) beta = ev;
-      if (beta <= alpha) break;
-    }
-    return minEval === Infinity ? 0 : minEval;
-  }
-};
-
 export const getBestMove = (board: BoardState, depth: number = 2): LocationKey | null => {
+  console.log('getting best move')
+  const startTime = performance.now();
+  let evaluations = 0;
+
+  const minimax = (
+    board: BoardState,
+    depth: number,
+    alpha: number,
+    beta: number,
+    isMaximizing: boolean
+  ): number => {
+    evaluations++;
+    const score = evaluateBoard(board);
+    if (Math.abs(score) >= 1000000 || depth === 0) return score;
+
+    if (isMaximizing) {
+      let maxEval = -Infinity;
+      for (let i = 0; i < ALL_MOVES.length; i++) {
+        const move = ALL_MOVES[i];
+        if (board[move]) continue;
+
+        board[move] = AI_PLAYER;
+        const ev = minimax(board, depth - 1, alpha, beta, false);
+        delete board[move];
+
+        if (ev > maxEval) maxEval = ev;
+        if (ev > alpha) alpha = ev;
+        if (beta <= alpha) break;
+      }
+      return maxEval === -Infinity ? 0 : maxEval;
+    } else {
+      let minEval = Infinity;
+      for (let i = 0; i < ALL_MOVES.length; i++) {
+        const move = ALL_MOVES[i];
+        if (board[move]) continue;
+
+        board[move] = HUMAN_PLAYER;
+        const ev = minimax(board, depth - 1, alpha, beta, true);
+        delete board[move];
+
+        if (ev < minEval) minEval = ev;
+        if (ev < beta) beta = ev;
+        if (beta <= alpha) break;
+      }
+      return minEval === Infinity ? 0 : minEval;
+    }
+  };
+
   const availableMoves: LocationKey[] = [];
   for (let i = 0; i < ALL_MOVES.length; i++) {
     if (!board[ALL_MOVES[i]]) availableMoves.push(ALL_MOVES[i]);
@@ -92,7 +97,6 @@ export const getBestMove = (board: BoardState, depth: number = 2): LocationKey |
   let bestScore = -Infinity;
   let bestMove: LocationKey | null = null;
 
-  // Shuffle for variety
   availableMoves.sort(() => Math.random() - 0.5);
 
   for (let i = 0; i < availableMoves.length; i++) {
@@ -106,6 +110,9 @@ export const getBestMove = (board: BoardState, depth: number = 2): LocationKey |
       bestMove = move;
     }
   }
+
+  const endTime = performance.now();
+  console.log(`[AI] Move: ${bestMove}, Evaluations: ${evaluations}, Time: ${(endTime - startTime).toFixed(2)}ms`);
 
   return bestMove;
 };
