@@ -25,10 +25,14 @@ const CircularBoard: React.FC = () => {
     const isWinningMove = winningMoves?.includes(key);
     
     const ring = parseInt(key.slice(1, 2));
+    const sliceNum = parseInt(key.slice(3));
     const scales = [0, 0.5, 0.8, 1.05, 1.25]; // index 1-4
     const hitRadii = [0, 20, 28, 34, 38];
     const markerScale = scales[ring];
     const hitRadius = hitRadii[ring];
+
+    // Rotation aligns X with the radial line (s * 45 degrees + center offset 22.5)
+    const xRotation = (sliceNum * 45) + 22.5;
 
     return (
       <g 
@@ -40,7 +44,7 @@ const CircularBoard: React.FC = () => {
         <circle r={hitRadius} fill="transparent" className="group-hover:fill-gray-100/20" />
         
         {player && (
-          <g transform={`scale(${markerScale})`}>
+          <g transform={`scale(${markerScale}) ${player === 'x' ? `rotate(${xRotation})` : ''}`}>
             {player === 'x' && (
               <g stroke={isWinningMove ? "#ef4444" : "#374151"} strokeWidth="5" strokeLinecap="round">
                 <line x1="-12" y1="-12" x2="12" y2="12" />
