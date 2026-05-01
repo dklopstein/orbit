@@ -18,6 +18,14 @@ export const useMultiplayer = ({ onRemoteMove, onRemoteReset, setLocalPlayer }: 
   const [error, setError] = useState<string>('');
 
   const connRef = useRef<DataConnection | null>(null);
+  const onRemoteMoveRef = useRef(onRemoteMove);
+  const onRemoteResetRef = useRef(onRemoteReset);
+
+  // Keep refs up to date with latest props
+  useEffect(() => {
+    onRemoteMoveRef.current = onRemoteMove;
+    onRemoteResetRef.current = onRemoteReset;
+  }, [onRemoteMove, onRemoteReset]);
 
   const cleanup = useCallback(() => {
     if (connRef.current) {
@@ -43,9 +51,9 @@ export const useMultiplayer = ({ onRemoteMove, onRemoteReset, setLocalPlayer }: 
       if (typeof data !== 'object') return;
       
       if (data.type === 'MOVE') {
-        onRemoteMove(data.location as LocationKey);
+        onRemoteMoveRef.current(data.location as LocationKey);
       } else if (data.type === 'RESET') {
-        onRemoteReset();
+        onRemoteResetRef.current();
       }
     });
 
@@ -66,9 +74,9 @@ export const useMultiplayer = ({ onRemoteMove, onRemoteReset, setLocalPlayer }: 
     cleanup();
     setStatus('hosting');
     
-    // Generate a shorter ID for easier sharing (optional, PeerJS default is UUID-like)
-    // For now, let's just let PeerJS generate one.
-    const newPeer = new Peer();
+    // Generate a short uppercase ID for easier sharing
+    const shortId = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const newPeer = new Peer(shortId);
     
     newPeer.on('open', (id) => {
       setPeer(newPeer);

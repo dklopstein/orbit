@@ -32,29 +32,36 @@ export const useGameState = () => {
   }, []);
 
   const playMove = useCallback((location: LocationKey, isRemote: boolean = false) => {
-    // In online mode, only allow moves if it's our turn OR if it's a remote move being applied
-    if (gameMode === 'online' && !isRemote && turn !== localPlayer) {
-      return;
-    }
+    let moveMade: { location: LocationKey, player: Player } | null = null;
 
-    if (board[location] || winner || (isAiThinkingRef.current && !isRemote)) {
-      return;
-    }
+    setBoard(prevBoard => {
+      // In online mode, only allow moves if it's our turn OR if it's a remote move being applied
+      if (gameMode === 'online' && !isRemote && turn !== localPlayer) {
+        return prevBoard;
+      }
 
-    const newBoard = { ...board, [location]: turn };
-    setBoard(newBoard);
+      if (prevBoard[location] || winner || (isAiThinkingRef.current && !isRemote)) {
+        return prevBoard;
+      }
 
-    const winResult = checkWinner(newBoard);
-    if (winResult) {
-      setWinner(winResult.winner);
-      setWinningMoves(winResult.moves);
-      setWinningType(winResult.type || null);
-    } else {
-      setTurn(prev => (prev === 'x' ? 'o' : 'x'));
-    }
+      const currentPlayer = turn;
+      const newBoard = { ...prevBoard, [location]: currentPlayer };
+      moveMade = { location, player: currentPlayer };
 
-    return { location, player: turn };
-  }, [board, turn, winner, checkWinner, gameMode, localPlayer]);
+      const winResult = checkWinner(newBoard);
+      if (winResult) {
+        setWinner(winResult.winner);
+        setWinningMoves(winResult.moves);
+        setWinningType(winResult.type || null);
+      } else {
+        setTurn(prev => (prev === 'x' ? 'o' : 'x'));
+      }
+
+      return newBoard;
+    });
+
+    return moveMade;
+  }, [turn, winner, checkWinner, gameMode, localPlayer]);
 
   // AI Turn effect
   useEffect(() => {
