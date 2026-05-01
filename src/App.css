@@ -7,13 +7,13 @@
   --surface-hover: oklch(22% 0.02 260);
   
   --text-main: oklch(92% 0.005 260);
-  --text-muted: oklch(65% 0.01 260);
-  --text-dim: oklch(45% 0.01 260);
+  --text-muted: oklch(75% 0.01 260);
+  --text-dim: oklch(60% 0.01 260);
   
   --accent-primary: oklch(75% 0.12 260); /* Precision Blue */
   --accent-secondary: oklch(75% 0.15 20);  /* Precision Red */
   
-  --border: oklch(35% 0.01 260);
+  --border: oklch(45% 0.01 260);
   --border-focus: oklch(55% 0.05 260);
 
   /* Typography */
