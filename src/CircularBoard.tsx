@@ -57,6 +57,15 @@ const CircularBoard: React.FC = () => {
   });
 
   const [mounted, setMounted] = useState(false);
+  const [showLobby, setShowLobby] = useState(false);
+
+  useEffect(() => {
+    if (gameMode === 'online' && status !== 'connected') {
+      setShowLobby(true);
+    } else if (status === 'connected') {
+      setShowLobby(false);
+    }
+  }, [gameMode, status]);
 
   useEffect(() => {
     localStorage.setItem('theme', theme);
@@ -247,7 +256,7 @@ const CircularBoard: React.FC = () => {
       </header>
 
       <div className="flex-1 w-full max-w-2xl flex flex-col min-h-0 items-center justify-center">
-        {gameMode === 'online' && status !== 'connected' && (
+        {showLobby && (
           <LobbyOverlay
             status={status}
             lobbyCode={lobbyCode}
@@ -257,6 +266,7 @@ const CircularBoard: React.FC = () => {
               disconnect();
               resetGame('2p');
             }}
+            onExitComplete={() => setShowLobby(false)}
           />
         )}
 

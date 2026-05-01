@@ -7,9 +7,10 @@ interface LobbyOverlayProps {
   onHost: () => void;
   onJoin: (code: string) => void;
   onCancel: () => void;
+  onExitComplete: () => void;
 }
 
-const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, onJoin, onCancel }) => {
+const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, onJoin, onCancel, onExitComplete }) => {
   const [inputCode, setInputCode] = useState('');
   const [isExiting, setIsExiting] = useState(false);
 
@@ -22,8 +23,9 @@ const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, 
 
   const handleCancel = () => {
     setIsExiting(true);
+    onCancel(); // Call immediately to update parent state (e.g. gameMode)
     setTimeout(() => {
-      onCancel();
+      onExitComplete();
     }, 500); // Match animation duration
   };
 
