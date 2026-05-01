@@ -108,34 +108,71 @@ const CircularBoard: React.FC = () => {
     <div className="flex flex-col items-center h-[100dvh] bg-[var(--bg)] p-6 md:p-10 selection:bg-[var(--accent-primary)] selection:text-[var(--bg)] overflow-hidden">
       <header className="w-full max-w-2xl flex items-baseline justify-between shrink-0 mb-6 animate-fade-in">
         <div className="flex items-center gap-4">
-          <h1 className="text-4xl md:text-5xl text-[var(--text-main)]">
-            orbit
-          </h1>
-          <svg width="48" height="48" viewBox="0 0 100 100" className="text-[var(--accent-primary)] opacity-90">
-            <g transform="rotate(-45 50 50)">
-              <ellipse
-                cx="50" cy="50" rx="38" ry="14"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="5"
-                strokeOpacity="0.25"
-              />
-              <circle
-                r="8"
-                fill="currentColor"
-                stroke="var(--bg)"
-                strokeWidth="6"
+          <h1 className="text-4xl md:text-5xl text-[var(--text-main)] flex items-center">
+            <span className="relative inline-flex items-center justify-center">
+              {/* Back layer - top-right half of the orbit */}
+              <svg
+                width="64"
+                height="64"
+                viewBox="0 0 100 100"
+                className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 text-[var(--accent-primary)] opacity-90 pointer-events-none z-0"
+                style={{ clipPath: 'polygon(0 0, 100% 0, 100% 100%)' }}
               >
-                <animateMotion
-                  dur="3s"
-                  repeatCount="indefinite"
-                  path="M 12,50 a 38,14 0 1,0 76,0 a 38,14 0 1,0 -76,0"
-                />
-              </circle>
-            </g>
-          </svg>
-        </div>
-        <div className="flex items-center gap-8">
+                <g transform="rotate(45 50 50)">
+                  <ellipse
+                    cx="50" cy="50" rx="38" ry="14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    strokeOpacity="0.7"
+                  />
+                  <circle
+                    r="6"
+                    fill="currentColor"
+                  >
+                    <animateMotion
+                      dur="3s"
+                      repeatCount="indefinite"
+                      path="M 12,50 a 38,14 0 1,0 76,0 a 38,14 0 1,0 -76,0"
+                    />
+                  </circle>
+                </g>
+              </svg>
+
+              <span className="relative z-10 pointer-events-none">o</span>
+
+              {/* Front layer - bottom-left half of the orbit */}
+              <svg
+                width="64"
+                height="64"
+                viewBox="0 0 100 100"
+                className="absolute left-1/2 top-[55%] -translate-x-1/2 -translate-y-1/2 text-[var(--accent-primary)] opacity-90 pointer-events-none z-20"
+                style={{ clipPath: 'polygon(0 0, 100% 100%, 0 100%)' }}
+              >
+                <g transform="rotate(45 50 50)">
+                  <ellipse
+                    cx="50" cy="50" rx="38" ry="14"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                    strokeOpacity="0.7"
+                  />
+                  <circle
+                    r="6"
+                    fill="currentColor"
+                  >
+                    <animateMotion
+                      dur="3s"
+                      repeatCount="indefinite"
+                      path="M 12,50 a 38,14 0 1,0 76,0 a 38,14 0 1,0 -76,0"
+                    />
+                  </circle>
+                </g>
+              </svg>
+            </span>
+            rbit
+          </h1>
+        </div>        <div className="flex items-center gap-8">
           <div className="flex gap-6 text-xs tracking-widest uppercase font-bold text-[var(--text-dim)]">
             <button
               onClick={() => resetGame('1p')}
