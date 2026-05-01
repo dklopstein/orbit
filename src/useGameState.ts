@@ -3,7 +3,7 @@ import { WIN_CONDITIONS, COORDINATES } from './constants';
 import type { LocationKey, Player, BoardState, Difficulty } from './constants';
 import { getBestMove } from './ai';
 
-export type GameMode = '1p' | '2p';
+export type GameMode = '1p' | '2p' | 'online';
 
 export const useGameState = () => {
   const [board, setBoard] = useState<BoardState>({});
@@ -13,6 +13,7 @@ export const useGameState = () => {
   const [winningType, setWinningType] = useState<string | null>(null);
   const [gameMode, setGameMode] = useState<GameMode>('2p');
   const [difficulty, setDifficulty] = useState<Difficulty>('Impossible');
+  const [localPlayer, setLocalPlayer] = useState<Player | null>(null);
   const [isAiThinking, setIsAiThinking] = useState(false);
   const isAiThinkingRef = useRef(false);
 
@@ -30,8 +31,13 @@ export const useGameState = () => {
     return null;
   }, []);
 
-  const playMove = useCallback((location: LocationKey, isAiCall: boolean = false) => {
-    if (board[location] || winner || (isAiThinkingRef.current && !isAiCall)) {
+  const playMove = useCallback((location: LocationKey, isRemote: boolean = false) => {
+    // In online mode, only allow moves if it's our turn OR if it's a remote move being applied
+    if (gameMode === 'online' && !isRemote && turn !== localPlayer) {
+      return;
+    }
+
+    if (board[location] || winner || (isAiThinkingRef.current && !isRemote)) {
       return;
     }
 
@@ -46,7 +52,9 @@ export const useGameState = () => {
     } else {
       setTurn(prev => (prev === 'x' ? 'o' : 'x'));
     }
-  }, [board, turn, winner, checkWinner]);
+
+    return { location, player: turn };
+  }, [board, turn, winner, checkWinner, gameMode, localPlayer]);
 
   // AI Turn effect
   useEffect(() => {
@@ -90,10 +98,12 @@ export const useGameState = () => {
     winningType,
     gameMode,
     difficulty,
+    localPlayer,
     isAiThinking,
     playMove,
     resetGame,
     setGameMode,
+    setLocalPlayer,
     setDifficulty,
   };
 };
