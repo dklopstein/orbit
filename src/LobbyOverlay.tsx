@@ -6,10 +6,12 @@ interface LobbyOverlayProps {
   lobbyCode: string;
   onHost: () => void;
   onJoin: (code: string) => void;
+  onCancel: () => void;
 }
 
-const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, onJoin }) => {
+const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, onJoin, onCancel }) => {
   const [inputCode, setInputCode] = useState('');
+  const [isExiting, setIsExiting] = useState(false);
 
   const handleJoin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,12 +20,19 @@ const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, 
     }
   };
 
+  const handleCancel = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+      onCancel();
+    }, 500); // Match animation duration
+  };
+
   const copyCode = () => {
     navigator.clipboard.writeText(lobbyCode);
   };
 
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center bg-[var(--bg)] bg-opacity-95 backdrop-blur-sm animate-fade-in">
+    <div className={`absolute inset-0 z-50 flex items-center justify-center bg-[var(--bg)] bg-opacity-95 backdrop-blur-sm ${isExiting ? 'animate-fade-out' : 'animate-fade-in'}`}>
       <div className="w-full max-w-md p-8 flex flex-col items-center gap-8">
         <div className="flex flex-col items-center gap-2">
           <h2 className="text-2xl tracking-[0.2em] uppercase font-black text-[var(--text-main)]">
@@ -109,6 +118,17 @@ const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, 
             </button>
           </div>
         )}
+
+        <button
+          onClick={handleCancel}
+          className="group flex flex-col items-center gap-2 mt-8 animate-fade-in"
+          style={{ animationDelay: '0.4s', animationFillMode: 'both' }}
+        >
+          <span className="text-[var(--text-dim)] text-[10px] tracking-[0.3em] uppercase font-bold group-hover:text-[var(--text-main)] transition-colors">
+            Return to Hangar
+          </span>
+          <div className="w-4 h-[1px] bg-[var(--border)] group-hover:w-12 group-hover:bg-[var(--text-main)] transition-all duration-500"></div>
+        </button>
       </div>
     </div>
   );
