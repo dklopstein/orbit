@@ -1,14 +1,18 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { WIN_CONDITIONS, COORDINATES } from './constants';
 import type { LocationKey, Player, BoardState } from './constants';
+import { getBestMove } from './ai';
+
+export type GameMode = '1p' | '2p';
 
 export const useGameState = () => {
   const [board, setBoard] = useState<BoardState>({});
   const [turn, setTurn] = useState<Player>('x');
   const [winner, setWinner] = useState<Player | 'tie' | null>(null);
   const [winningMoves, setWinningMoves] = useState<readonly LocationKey[] | null>(null);
-
   const [winningType, setWinningType] = useState<string | null>(null);
+  const [gameMode, setGameMode] = useState<GameMode>('2p');
+  const [isAiThinking, setIsAiThinking] = useState(false);
 
   const checkWinner = useCallback((currentBoard: BoardState) => {
     for (const [condition, moves] of Object.entries(WIN_CONDITIONS)) {
@@ -25,7 +29,7 @@ export const useGameState = () => {
   }, []);
 
   const playMove = useCallback((location: LocationKey) => {
-    if (board[location] || winner) return;
+    if (board[location] || winner || isAiThinking) return;
 
     const newBoard = { ...board, [location]: turn };
     setBoard(newBoard);
@@ -38,14 +42,32 @@ export const useGameState = () => {
     } else {
       setTurn(prev => (prev === 'x' ? 'o' : 'x'));
     }
-  }, [board, turn, winner, checkWinner]);
+  }, [board, turn, winner, isAiThinking, checkWinner]);
 
-  const resetGame = useCallback(() => {
+  // AI Turn effect
+  useEffect(() => {
+    if (gameMode === '1p' && turn === 'o' && !winner && !isAiThinking) {
+      setIsAiThinking(true);
+      // Small timeout to let the UI update and show "AI is thinking"
+      const timer = setTimeout(() => {
+        const bestMove = getBestMove({ ...board }, 3);
+        if (bestMove) {
+          playMove(bestMove);
+        }
+        setIsAiThinking(false);
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [gameMode, turn, winner, board, isAiThinking, playMove]);
+
+  const resetGame = useCallback((mode?: GameMode) => {
     setBoard({});
     setTurn('x');
     setWinner(null);
     setWinningMoves(null);
     setWinningType(null);
+    setIsAiThinking(false);
+    if (mode) setGameMode(mode);
   }, []);
 
   return {
@@ -54,7 +76,10 @@ export const useGameState = () => {
     winner,
     winningMoves,
     winningType,
+    gameMode,
+    isAiThinking,
     playMove,
     resetGame,
+    setGameMode,
   };
 };

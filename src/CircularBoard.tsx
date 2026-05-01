@@ -4,7 +4,17 @@ import type { LocationKey } from './constants';
 import { useGameState } from './useGameState';
 
 const CircularBoard: React.FC = () => {
-  const { board, turn, winner, winningMoves, winningType, playMove, resetGame } = useGameState();
+  const { 
+    board, 
+    turn, 
+    winner, 
+    winningMoves, 
+    winningType, 
+    gameMode, 
+    isAiThinking, 
+    playMove, 
+    resetGame,
+  } = useGameState();
 
   const scale = 1;
   const offset = 250;
@@ -65,9 +75,28 @@ const CircularBoard: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <h1 className="text-4xl font-bold mb-8 text-gray-800 tracking-tight">Circle Tic-Tac-Toe</h1>
+      <h1 className="text-4xl font-bold mb-4 text-gray-800 tracking-tight">Circle Tic-Tac-Toe</h1>
       
-      <div className="mb-6 text-2xl font-bold h-8">
+      <div className="flex gap-4 mb-8">
+        <button
+          onClick={() => resetGame('1p')}
+          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+            gameMode === '1p' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          1 Player (vs AI)
+        </button>
+        <button
+          onClick={() => resetGame('2p')}
+          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
+            gameMode === '2p' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
+          }`}
+        >
+          2 Players
+        </button>
+      </div>
+
+      <div className="mb-6 text-2xl font-bold h-8 flex items-center justify-center gap-2">
         {winner ? (
           winner === 'tie' ? (
             <span className="text-orange-600">It's a Tie!</span>
@@ -76,8 +105,19 @@ const CircularBoard: React.FC = () => {
               Player {winner.toUpperCase()} Wins!
             </span>
           )
+        ) : isAiThinking ? (
+          <span className="text-indigo-600 flex items-center gap-2">
+            AI is thinking...
+            <span className="flex gap-1">
+              <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce"></span>
+              <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+              <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+            </span>
+          </span>
         ) : (
-          <span className="text-gray-600">Player {turn.toUpperCase()}'s Turn</span>
+          <span className="text-gray-600">
+            {gameMode === '1p' && turn === 'o' ? 'AI is moving...' : `Player ${turn.toUpperCase()}'s Turn`}
+          </span>
         )}
       </div>
 
@@ -112,7 +152,7 @@ const CircularBoard: React.FC = () => {
       </div>
 
       <button
-        onClick={resetGame}
+        onClick={() => resetGame()}
         className="mt-10 px-10 py-4 bg-gray-900 text-white rounded-2xl font-bold shadow-xl hover:bg-gray-800 transition-all transform hover:scale-105 active:scale-95"
       >
         Restart Game
