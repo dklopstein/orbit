@@ -66,7 +66,7 @@ export const useGameState = () => {
       const timer = setTimeout(() => {
         console.log('[AI Effect] Timer fired, calling getBestMove...');
         const currentBoard = { ...board };
-        const bestMove = getBestMove(currentBoard, 3);
+        const bestMove = getBestMove(currentBoard, 4);
         
         console.log('[AI Effect] getBestMove result:', bestMove);
         
