@@ -120,7 +120,7 @@ const CircularBoard: React.FC = () => {
               >
                 <g transform="rotate(45 50 50)">
                   <ellipse
-                    cx="50" cy="50" rx="38" ry="14"
+                    cx="50" cy="50" rx="38" ry="8"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="4"
@@ -133,7 +133,7 @@ const CircularBoard: React.FC = () => {
                     <animateMotion
                       dur="3s"
                       repeatCount="indefinite"
-                      path="M 12,50 a 38,14 0 1,0 76,0 a 38,14 0 1,0 -76,0"
+                      path="M 12,50 a 38,8 0 1,0 76,0 a 38,10 0 1,0 -76,0"
                     />
                   </circle>
                 </g>
@@ -151,7 +151,7 @@ const CircularBoard: React.FC = () => {
               >
                 <g transform="rotate(45 50 50)">
                   <ellipse
-                    cx="50" cy="50" rx="38" ry="14"
+                    cx="50" cy="50" rx="38" ry="8"
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="4"
@@ -164,7 +164,7 @@ const CircularBoard: React.FC = () => {
                     <animateMotion
                       dur="3s"
                       repeatCount="indefinite"
-                      path="M 12,50 a 38,14 0 1,0 76,0 a 38,14 0 1,0 -76,0"
+                      path="M 12,50 a 38,8 0 1,0 76,0 a 38,10 0 1,0 -76,0"
                     />
                   </circle>
                 </g>
