@@ -38,7 +38,19 @@ export const evaluateBoard = (board: BoardState): number => {
   return score;
 };
 
-export const getBestMove = (board: BoardState, depth: number = 2): LocationKey | null => {
+const orderMoves = (board: BoardState, moves: LocationKey[], player: Player): LocationKey[] => {
+  return moves
+    .map((move) => {
+      board[move] = player;
+      const score = Math.abs(evaluateBoard(board));
+      delete board[move];
+      return { move, score };
+    })
+    .sort((a, b) => b.score - a.score)
+    .map((item) => item.move);
+};
+
+export const getBestMove = (board: BoardState, depth: number = 3): LocationKey | null => {
   console.log('getting best move')
   const startTime = performance.now();
   let evaluations = 0;
@@ -54,12 +66,20 @@ export const getBestMove = (board: BoardState, depth: number = 2): LocationKey |
     const score = evaluateBoard(board);
     if (Math.abs(score) >= 1000000 || depth === 0) return score;
 
+    const availableMoves: LocationKey[] = [];
+    for (let i = 0; i < ALL_MOVES.length; i++) {
+      if (!board[ALL_MOVES[i]]) availableMoves.push(ALL_MOVES[i]);
+    }
+
+    if (availableMoves.length === 0) return 0;
+
+    // Order moves to improve pruning
+    const orderedMoves = orderMoves(board, availableMoves, isMaximizing ? AI_PLAYER : HUMAN_PLAYER);
+
     if (isMaximizing) {
       let maxEval = -Infinity;
-      for (let i = 0; i < ALL_MOVES.length; i++) {
-        const move = ALL_MOVES[i];
-        if (board[move]) continue;
-
+      for (let i = 0; i < orderedMoves.length; i++) {
+        const move = orderedMoves[i];
         board[move] = AI_PLAYER;
         const ev = minimax(board, depth - 1, alpha, beta, false);
         delete board[move];
@@ -71,10 +91,8 @@ export const getBestMove = (board: BoardState, depth: number = 2): LocationKey |
       return maxEval === -Infinity ? 0 : maxEval;
     } else {
       let minEval = Infinity;
-      for (let i = 0; i < ALL_MOVES.length; i++) {
-        const move = ALL_MOVES[i];
-        if (board[move]) continue;
-
+      for (let i = 0; i < orderedMoves.length; i++) {
+        const move = orderedMoves[i];
         board[move] = HUMAN_PLAYER;
         const ev = minimax(board, depth - 1, alpha, beta, true);
         delete board[move];
@@ -97,10 +115,11 @@ export const getBestMove = (board: BoardState, depth: number = 2): LocationKey |
   let bestScore = -Infinity;
   let bestMove: LocationKey | null = null;
 
-  availableMoves.sort(() => Math.random() - 0.5);
+  // Order moves for the root search
+  const orderedMoves = orderMoves(board, availableMoves, AI_PLAYER);
 
-  for (let i = 0; i < availableMoves.length; i++) {
-    const move = availableMoves[i];
+  for (let i = 0; i < orderedMoves.length; i++) {
+    const move = orderedMoves[i];
     board[move] = AI_PLAYER;
     const score = minimax(board, depth - 1, -Infinity, Infinity, false);
     delete board[move];
