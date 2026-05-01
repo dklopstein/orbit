@@ -29,6 +29,7 @@ const CircularBoard: React.FC = () => {
     joinLobby,
     sendMove,
     sendReset,
+    disconnect,
   } = useMultiplayer({
     onRemoteMove: (location) => playMove(location, true),
     onRemoteReset: () => resetGame(),
@@ -252,6 +253,10 @@ const CircularBoard: React.FC = () => {
             lobbyCode={lobbyCode}
             onHost={hostLobby}
             onJoin={joinLobby}
+            onCancel={() => {
+              disconnect();
+              resetGame('2p');
+            }}
           />
         )}
 
