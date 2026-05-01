@@ -84,7 +84,7 @@ const CircularBoard: React.FC = () => {
     <div className="flex flex-col items-center h-[100dvh] bg-[var(--bg)] p-6 md:p-10 selection:bg-[var(--accent-primary)] selection:text-[var(--bg)] overflow-hidden">
       <header className="w-full max-w-2xl flex items-baseline justify-between shrink-0 mb-6 animate-fade-in">
         <h1 className="text-4xl md:text-5xl text-[var(--text-main)]">
-          orbit <span className="text-[var(--text-dim)] font-light">xo</span>
+          orbit
         </h1>
         <div className="flex gap-6 text-xs tracking-widest uppercase font-bold text-[var(--text-dim)]">
           <button
