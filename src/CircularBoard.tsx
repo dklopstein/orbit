@@ -59,37 +59,9 @@ const CircularBoard: React.FC = () => {
       return { x: x * scale + offset, y: -y * scale + offset };
     });
 
-    if (winningType.startsWith('spiral')) {
-      // Catmull-Rom to Cubic Bezier spline through 4 points
-      // We need virtual P-1 and P4 for tangents
-      const pMinus1 = { x: 2 * pts[0].x - pts[1].x, y: 2 * pts[0].y - pts[1].y };
-      const p4 = { x: 2 * pts[3].x - pts[2].x, y: 2 * pts[3].y - pts[2].y };
-      const fullPts = [pMinus1, ...pts, p4];
-
-      let d = `M ${pts[0].x},${pts[0].y}`;
-      for (let i = 1; i < fullPts.length - 2; i++) {
-        const p0 = fullPts[i - 1];
-        const p1 = fullPts[i];
-        const p2 = fullPts[i + 1];
-        const p3 = fullPts[i + 2];
-
-        const cp1x = p1.x + (p2.x - p0.x) / 6;
-        const cp1y = p1.y + (p2.y - p0.y) / 6;
-        const cp2x = p2.x - (p3.x - p1.x) / 6;
-        const cp2y = p2.y - (p3.y - p1.y) / 6;
-
-        d += ` C ${cp1x},${cp1y} ${cp2x},${cp2y} ${p2.x},${p2.y}`;
-      }
-      return d;
-    }
-
-    if (winningType.startsWith('circular')) {
-      // Keep polyline for circular for now as wrap-around arc math is complex,
-      // but if we wanted smooth, we'd use SVG Arc commands.
-    }
-
     return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
   };
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
