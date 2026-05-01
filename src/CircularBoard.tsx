@@ -4,16 +4,16 @@ import type { LocationKey } from './constants';
 import { useGameState } from './useGameState';
 
 const CircularBoard: React.FC = () => {
-  const {
-    board,
-    turn,
-    winner,
-    winningMoves,
-    winningType,
-    gameMode,
+  const { 
+    board, 
+    turn, 
+    winner, 
+    winningMoves, 
+    winningType, 
+    gameMode, 
     difficulty,
-    isAiThinking,
-    playMove,
+    isAiThinking, 
+    playMove, 
     resetGame,
     setDifficulty,
   } = useGameState();
@@ -25,7 +25,7 @@ const CircularBoard: React.FC = () => {
     const [x, y] = COORDINATES[key];
     const player = board[key];
     const isWinningMove = winningMoves?.includes(key);
-
+    
     const ring = parseInt(key.slice(1, 2));
     const sliceNum = parseInt(key.slice(3));
     const scales = [0, 0.5, 0.8, 1.05, 1.25];
@@ -36,8 +36,8 @@ const CircularBoard: React.FC = () => {
     const xRotation = (sliceNum * 45) + 22.5;
 
     return (
-      <g
-        key={key}
+      <g 
+        key={key} 
         transform={`translate(${x * scale + offset}, ${-y * scale + offset})`}
         onClick={() => playMove(key)}
         className="cursor-pointer group"
@@ -46,9 +46,9 @@ const CircularBoard: React.FC = () => {
         {player && (
           <g transform={`scale(${markerScale}) ${player === 'x' ? `rotate(${xRotation})` : ''}`}>
             {player === 'x' && (
-              <g
-                stroke={isWinningMove ? "var(--accent-secondary)" : "var(--text-main)"}
-                strokeWidth="2.5"
+              <g 
+                stroke={isWinningMove ? "var(--accent-secondary)" : "var(--text-main)"} 
+                strokeWidth="2.5" 
                 strokeLinecap="square"
                 className="animate-fade-in"
               >
@@ -57,11 +57,11 @@ const CircularBoard: React.FC = () => {
               </g>
             )}
             {player === 'o' && (
-              <circle
-                r="12"
-                fill="none"
-                stroke={isWinningMove ? "var(--accent-primary)" : "var(--text-main)"}
-                strokeWidth="2.5"
+              <circle 
+                r="12" 
+                fill="none" 
+                stroke={isWinningMove ? "var(--accent-primary)" : "var(--text-main)"} 
+                strokeWidth="2.5" 
                 className="animate-fade-in"
               />
             )}
@@ -87,13 +87,13 @@ const CircularBoard: React.FC = () => {
           orbit
         </h1>
         <div className="flex gap-6 text-xs tracking-widest uppercase font-bold text-[var(--text-dim)]">
-          <button
+          <button 
             onClick={() => resetGame('1p')}
             className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '1p' ? 'text-[var(--accent-primary)]' : ''}`}
           >
             Solo
           </button>
-          <button
+          <button 
             onClick={() => resetGame('2p')}
             className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '2p' ? 'text-[var(--accent-primary)]' : ''}`}
           >
@@ -101,7 +101,7 @@ const CircularBoard: React.FC = () => {
           </button>
         </div>
       </header>
-
+      
       <div className="flex-1 w-full max-w-2xl flex flex-col min-h-0 items-center justify-center">
         {gameMode === '1p' && (
           <div className="mb-8 flex gap-3 animate-fade-in animate-stagger-1 shrink-0">
@@ -109,10 +109,11 @@ const CircularBoard: React.FC = () => {
               <button
                 key={level}
                 onClick={() => setDifficulty(level)}
-                className={`text-[9px] tracking-[0.2em] uppercase font-black px-3 py-1.5 rounded-full border transition-all ${difficulty === level
-                    ? 'bg-[var(--text-main)] text-[var(--bg)] border-[var(--text-main)]'
+                className={`text-[9px] tracking-[0.2em] uppercase font-black px-3 py-1.5 rounded-full border transition-all ${
+                  difficulty === level 
+                    ? 'bg-[var(--text-main)] text-[var(--bg)] border-[var(--text-main)]' 
                     : 'text-[var(--text-dim)] border-[var(--border)] hover:border-[var(--text-muted)]'
-                  }`}
+                }`}
               >
                 {level}
               </button>
@@ -131,16 +132,16 @@ const CircularBoard: React.FC = () => {
             </span>
           ) : (
             <span className="text-[var(--text-dim)] text-[10px] tracking-[0.4em] uppercase font-black">
-              {gameMode === '1p' && turn === 'o' ? 'AI Sequence' : `Awaiting Player ${turn.toUpperCase()}`}
+              {gameMode === '1p' && turn === 'o' ? 'AI Sequence' : `Await Player ${turn.toUpperCase()}`}
             </span>
           )}
         </div>
 
         <div className="relative w-full flex-1 min-h-0 flex items-center justify-center animate-fade-in animate-stagger-2">
           <div className="absolute inset-0 rounded-full bg-[oklch(75%_0.12_260_/_0.03)] blur-3xl pointer-events-none"></div>
-
-          <svg
-            viewBox="0 0 500 500"
+          
+          <svg 
+            viewBox="0 0 500 500" 
             className="w-full h-full max-w-full max-h-full transition-transform duration-700 relative z-10"
             preserveAspectRatio="xMidYMid meet"
           >
@@ -148,14 +149,14 @@ const CircularBoard: React.FC = () => {
             <circle cx="250" cy="250" r="120" fill="none" stroke="var(--border)" strokeWidth="1.5" />
             <circle cx="250" cy="250" r="175" fill="none" stroke="var(--border)" strokeWidth="1.5" />
             <circle cx="250" cy="250" r="230" fill="none" stroke="var(--border)" strokeWidth="2" />
-
+            
             <g stroke="var(--border)" strokeWidth="1">
               {[0, 45, 90, 135, 180, 225, 270, 315].map(angle => (
-                <line
+                <line 
                   key={angle}
-                  x1="250" y1="250"
-                  x2={250 + 230 * Math.cos(angle * Math.PI / 180)}
-                  y2={250 + 230 * Math.sin(angle * Math.PI / 180)}
+                  x1="250" y1="250" 
+                  x2={250 + 230 * Math.cos(angle * Math.PI / 180)} 
+                  y2={250 + 230 * Math.sin(angle * Math.PI / 180)} 
                 />
               ))}
             </g>
@@ -177,7 +178,7 @@ const CircularBoard: React.FC = () => {
 
         <button
           onClick={() => resetGame()}
-          className="mt-8 group flex flex-col items-center gap-2 shrink-0 animate-fade-in animate-stagger-3"
+          className="mt-6 md:mt-10 group flex flex-col items-center gap-2 shrink-0 animate-fade-in animate-stagger-3"
         >
           <span className="text-[var(--text-dim)] text-[10px] tracking-[0.3em] uppercase font-bold group-hover:text-[var(--text-main)] transition-colors">
             Reset System
@@ -186,8 +187,7 @@ const CircularBoard: React.FC = () => {
         </button>
       </div>
 
-      <footer className="mt-8 text-[var(--text-dim)] text-[9px] tracking-[0.2em] uppercase font-medium shrink-0 animate-fade-in animate-stagger-3">
-        Refined Tactical Environment v2.0
+      <footer className="mt-4 md:mt-8 shrink-0 animate-fade-in animate-stagger-3">
       </footer>
 
       <style>{`
