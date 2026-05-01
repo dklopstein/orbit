@@ -34,7 +34,7 @@ const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, 
   };
 
   return (
-    <div className={`absolute inset-0 z-50 flex items-center justify-center bg-[var(--bg)] bg-opacity-95 backdrop-blur-sm ${isExiting ? 'animate-fade-out' : 'animate-fade-in'}`}>
+    <div className={`fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg)] bg-opacity-95 backdrop-blur-sm ${isExiting ? 'animate-fade-out' : 'animate-fade-in'}`}>
       <div className="w-full max-w-md p-8 flex flex-col items-center gap-8">
         <div className="flex flex-col items-center gap-2">
           <h2 className="text-2xl tracking-[0.2em] uppercase font-black text-[var(--text-main)]">

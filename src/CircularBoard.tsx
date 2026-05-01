@@ -147,6 +147,20 @@ const CircularBoard: React.FC = () => {
 
   return (
     <div className="flex flex-col items-center h-[100dvh] bg-[var(--bg)] p-6 md:p-10 selection:bg-[var(--accent-primary)] selection:text-[var(--bg)] overflow-hidden">
+      {showLobby && (
+        <LobbyOverlay
+          status={status}
+          lobbyCode={lobbyCode}
+          onHost={hostLobby}
+          onJoin={joinLobby}
+          onCancel={() => {
+            disconnect();
+            resetGame('2p');
+          }}
+          onExitComplete={() => setShowLobby(false)}
+        />
+      )}
+
       <header className="w-full max-w-2xl flex items-baseline justify-between shrink-0 mb-6 animate-fade-in">
         <div className="flex items-center gap-4">
           <h1 className="text-4xl md:text-5xl text-[var(--text-main)] flex items-center">
@@ -213,7 +227,8 @@ const CircularBoard: React.FC = () => {
             </span>
             rbit
           </h1>
-        </div>        <div className="flex items-center gap-8">
+        </div>
+        <div className="flex items-center gap-8">
           <div className="flex gap-6 text-xs tracking-widest uppercase font-bold text-[var(--text-dim)]">
             <button
               onClick={() => handleReset('1p')}
@@ -256,20 +271,6 @@ const CircularBoard: React.FC = () => {
       </header>
 
       <div className="flex-1 w-full max-w-2xl flex flex-col min-h-0 items-center justify-center">
-        {showLobby && (
-          <LobbyOverlay
-            status={status}
-            lobbyCode={lobbyCode}
-            onHost={hostLobby}
-            onJoin={joinLobby}
-            onCancel={() => {
-              disconnect();
-              resetGame('2p');
-            }}
-            onExitComplete={() => setShowLobby(false)}
-          />
-        )}
-
         <div className={`grid-transition ${gameMode === '1p' ? 'grid-transition-open mb-8' : ''} shrink-0`}>
           <div className={`opacity-transition ${gameMode === '1p' ? 'opacity-transition-visible' : ''} flex gap-3`}>
             {(['Beginner', 'Pro', 'Impossible'] as const).map((level) => (
