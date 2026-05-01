@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { COORDINATES } from './constants';
 import type { LocationKey } from './constants';
 import { useGameState } from './useGameState';
+import { useMultiplayer } from './useMultiplayer';
+import LobbyOverlay from './LobbyOverlay';
 
 const CircularBoard: React.FC = () => {
   const {
@@ -12,11 +14,40 @@ const CircularBoard: React.FC = () => {
     winningType,
     gameMode,
     difficulty,
+    localPlayer,
     isAiThinking,
     playMove,
     resetGame,
+    setLocalPlayer,
     setDifficulty,
   } = useGameState();
+
+  const {
+    status,
+    lobbyCode,
+    hostLobby,
+    joinLobby,
+    sendMove,
+    sendReset,
+  } = useMultiplayer({
+    onRemoteMove: (location) => playMove(location, true),
+    onRemoteReset: () => resetGame(),
+    setLocalPlayer
+  });
+
+  const handlePlayMove = (key: LocationKey) => {
+    const result = playMove(key);
+    if (result && gameMode === 'online') {
+      sendMove(key);
+    }
+  };
+
+  const handleReset = (mode?: any) => {
+    resetGame(mode);
+    if (gameMode === 'online') {
+      sendReset();
+    }
+  };
 
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('theme');
@@ -63,7 +94,7 @@ const CircularBoard: React.FC = () => {
       <g
         key={key}
         transform={`translate(${x * scale + offset}, ${-y * scale + offset})`}
-        onClick={() => playMove(key)}
+        onClick={() => handlePlayMove(key)}
         className="cursor-pointer group"
       >
         <circle r={hitRadius} fill="transparent" />
@@ -175,16 +206,26 @@ const CircularBoard: React.FC = () => {
         </div>        <div className="flex items-center gap-8">
           <div className="flex gap-6 text-xs tracking-widest uppercase font-bold text-[var(--text-dim)]">
             <button
-              onClick={() => resetGame('1p')}
+              onClick={() => handleReset('1p')}
               className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '1p' ? 'text-[var(--accent-primary)]' : ''}`}
             >
               SOLO
             </button>
             <button
-              onClick={() => resetGame('2p')}
+              onClick={() => handleReset('2p')}
               className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '2p' ? 'text-[var(--accent-primary)]' : ''}`}
             >
               DUO
+            </button>
+            <button
+              onClick={() => {
+                if (gameMode !== 'online') {
+                  handleReset('online');
+                }
+              }}
+              className={`hover:text-[var(--text-main)] transition-colors ${gameMode === 'online' ? 'text-[var(--accent-primary)]' : ''}`}
+            >
+              ONLINE
             </button>
           </div>
 
@@ -205,6 +246,15 @@ const CircularBoard: React.FC = () => {
       </header>
 
       <div className="flex-1 w-full max-w-2xl flex flex-col min-h-0 items-center justify-center">
+        {gameMode === 'online' && status !== 'connected' && (
+          <LobbyOverlay
+            status={status}
+            lobbyCode={lobbyCode}
+            onHost={hostLobby}
+            onJoin={joinLobby}
+          />
+        )}
+
         <div className={`grid-transition ${gameMode === '1p' ? 'grid-transition-open mb-8' : ''} shrink-0`}>
           <div className={`opacity-transition ${gameMode === '1p' ? 'opacity-transition-visible' : ''} flex gap-3`}>
             {(['Beginner', 'Pro', 'Impossible'] as const).map((level) => (
@@ -233,7 +283,12 @@ const CircularBoard: React.FC = () => {
             </span>
           ) : (
             <span className="text-[var(--text-dim)] text-[10px] tracking-[0.4em] uppercase font-black">
-              {gameMode === '1p' && turn === 'o' ? 'AI Sequence' : `Awaiting Player ${turn.toUpperCase()}`}
+              {gameMode === '1p' && turn === 'o' ? 'AI Sequence' : 
+               gameMode === 'online' ? (
+                 status === 'connected' ? (
+                   turn === localPlayer ? 'Your Turn' : "Opponent's Turn"
+                 ) : 'Waiting for connection...'
+               ) : `Awaiting Player ${turn.toUpperCase()}`}
             </span>
           )}
         </div>
@@ -278,11 +333,12 @@ const CircularBoard: React.FC = () => {
         </div>
 
         <button
-          onClick={() => resetGame()}
-          className="mt-6 md:mt-10 group flex flex-col items-center gap-2 shrink-0 animate-fade-in animate-stagger-3"
+          onClick={() => handleReset()}
+          disabled={gameMode === 'online' && !winner}
+          className="mt-6 md:mt-10 group flex flex-col items-center gap-2 shrink-0 animate-fade-in animate-stagger-3 disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <span className="text-[var(--text-dim)] text-[10px] tracking-[0.3em] uppercase font-bold group-hover:text-[var(--text-main)] transition-colors">
-            Reset System
+            {gameMode === 'online' ? 'Rematch' : 'Reset System'}
           </span>
           <div className="w-8 h-[1px] bg-[var(--border)] group-hover:w-16 group-hover:bg-[var(--text-main)] transition-all duration-500"></div>
         </button>

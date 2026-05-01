@@ -3,7 +3,7 @@ import { WIN_CONDITIONS, COORDINATES } from './constants';
 import type { LocationKey, Player, BoardState, Difficulty } from './constants';
 import { getBestMove } from './ai';
 
-export type GameMode = '1p' | '2p';
+export type GameMode = '1p' | '2p' | 'online';
 
 export const useGameState = () => {
   const [board, setBoard] = useState<BoardState>({});
@@ -13,6 +13,7 @@ export const useGameState = () => {
   const [winningType, setWinningType] = useState<string | null>(null);
   const [gameMode, setGameMode] = useState<GameMode>('2p');
   const [difficulty, setDifficulty] = useState<Difficulty>('Impossible');
+  const [localPlayer, setLocalPlayer] = useState<Player | null>(null);
   const [isAiThinking, setIsAiThinking] = useState(false);
   const isAiThinkingRef = useRef(false);
 
@@ -30,12 +31,20 @@ export const useGameState = () => {
     return null;
   }, []);
 
-  const playMove = useCallback((location: LocationKey, isAiCall: boolean = false) => {
-    if (board[location] || winner || (isAiThinkingRef.current && !isAiCall)) {
-      return;
+  const playMove = useCallback((location: LocationKey, isRemote: boolean = false) => {
+    // 1. Validation
+    if (gameMode === 'online' && !isRemote && turn !== localPlayer) {
+      return null;
     }
 
-    const newBoard = { ...board, [location]: turn };
+    if (board[location] || winner || (isAiThinkingRef.current && !isRemote)) {
+      return null;
+    }
+
+    // 2. Execute Move
+    const currentPlayer = turn;
+    const newBoard = { ...board, [location]: currentPlayer };
+    
     setBoard(newBoard);
 
     const winResult = checkWinner(newBoard);
@@ -44,9 +53,11 @@ export const useGameState = () => {
       setWinningMoves(winResult.moves);
       setWinningType(winResult.type || null);
     } else {
-      setTurn(prev => (prev === 'x' ? 'o' : 'x'));
+      setTurn(currentPlayer === 'x' ? 'o' : 'x');
     }
-  }, [board, turn, winner, checkWinner]);
+
+    return { location, player: currentPlayer };
+  }, [board, turn, winner, checkWinner, gameMode, localPlayer]);
 
   // AI Turn effect
   useEffect(() => {
@@ -90,10 +101,12 @@ export const useGameState = () => {
     winningType,
     gameMode,
     difficulty,
+    localPlayer,
     isAiThinking,
     playMove,
     resetGame,
     setGameMode,
+    setLocalPlayer,
     setDifficulty,
   };
 };
