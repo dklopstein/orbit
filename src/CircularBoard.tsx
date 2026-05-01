@@ -91,20 +91,20 @@ const CircularBoard: React.FC = () => {
             onClick={() => resetGame('1p')}
             className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '1p' ? 'text-[var(--accent-primary)]' : ''}`}
           >
-            Solo
+            SOLO
           </button>
           <button 
             onClick={() => resetGame('2p')}
             className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '2p' ? 'text-[var(--accent-primary)]' : ''}`}
           >
-            Duo
+            DUO
           </button>
         </div>
       </header>
       
       <div className="flex-1 w-full max-w-2xl flex flex-col min-h-0 items-center justify-center">
-        {gameMode === '1p' && (
-          <div className="mb-8 flex gap-3 animate-fade-in animate-stagger-1 shrink-0">
+        <div className={`grid-transition ${gameMode === '1p' ? 'grid-transition-open mb-8' : ''} shrink-0`}>
+          <div className={`opacity-transition ${gameMode === '1p' ? 'opacity-transition-visible' : ''} flex gap-3`}>
             {(['Beginner', 'Pro', 'Impossible'] as const).map((level) => (
               <button
                 key={level}
@@ -119,7 +119,7 @@ const CircularBoard: React.FC = () => {
               </button>
             ))}
           </div>
-        )}
+        </div>
 
         <div className="mb-6 h-6 flex items-center justify-center shrink-0 animate-fade-in animate-stagger-2">
           {winner ? (
@@ -132,7 +132,7 @@ const CircularBoard: React.FC = () => {
             </span>
           ) : (
             <span className="text-[var(--text-dim)] text-[10px] tracking-[0.4em] uppercase font-black">
-              {gameMode === '1p' && turn === 'o' ? 'AI Sequence' : `Await Player ${turn.toUpperCase()}`}
+              {gameMode === '1p' && turn === 'o' ? 'AI Sequence' : `Awaiting Player ${turn.toUpperCase()}`}
             </span>
           )}
         </div>

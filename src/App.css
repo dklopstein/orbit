@@ -66,6 +66,29 @@ button {
 .animate-stagger-2 { animation-delay: 0.2s; }
 .animate-stagger-3 { animation-delay: 0.3s; }
 
+/* Transition Utilities */
+.grid-transition {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.grid-transition-open {
+  grid-template-rows: 1fr;
+}
+
+.opacity-transition {
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(-10px);
+}
+
+.opacity-transition-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
