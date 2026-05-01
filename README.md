@@ -1,73 +1,42 @@
-# React + TypeScript + Vite
+# Orbit
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A sophisticated circular Tic-Tac-Toe variant built with React, TypeScript, and Vite. Orbit redefines the classic game by placing it on a 3-ring relationship graph where connections represent orbital paths and radial segments.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **Unique Circular Gameplay**: Play on a 4-ring board with 32 possible locations. Win by aligning 4 markers radially, circularly, or along diagonal orbital paths.
+- **Multiplayer Modes**:
+  - **SOLO**: Challenge an AI with three difficulty levels: Beginner, Pro, and Impossible.
+  - **DUO**: Local couch co-op play.
+  - **ONLINE**: Real-time peer-to-peer multiplayer powered by PeerJS. "Mission Control" lobby system for hosting and joining via frequency codes.
+- **Modern UI/UX**:
+  - Immersive "Mission Control" interface with fluid transitions.
+  - Graceful Dark and Light theme support.
+  - Responsive SVG-based game board with interactive animations.
+  - Zero layout shift during state transitions.
+- **Technical Stack**:
+  - **React 19** with TypeScript for robust state management.
+  - **Tailwind CSS** for precision styling and OKLCH color system.
+  - **PeerJS** for decentralized online connectivity.
+  - **Vite** for ultra-fast development and building.
 
-## React Compiler
+## 🛠️ Installation
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+```powershell
+# Install dependencies
+npm install
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🎮 How to Play
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. **Select Mode**: Choose between SOLO, DUO, or ONLINE in the top navigation.
+2. **Radial Alignment**: Align 4 of your markers along one of the 8 radial lines.
+3. **Circular Alignment**: Align 4 markers within one of the 4 concentric rings.
+4. **Orbital Alignment**: Align markers across rings and segments to form a winning path.
+5. **Win**: The system will automatically detect and highlight the winning orbit with a dashed trajectory.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+*Built with precision for the next generation of strategy.*
