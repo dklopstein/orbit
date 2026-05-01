@@ -74,3 +74,4 @@ export const WIN_CONDITIONS = generateWinConditions();
 
 export type Player = 'x' | 'o';
 export type BoardState = Partial<Record<LocationKey, Player>>;
+export type Difficulty = 'Beginner' | 'Pro' | 'Impossible';

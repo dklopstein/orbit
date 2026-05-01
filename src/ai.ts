@@ -1,5 +1,5 @@
 import { WIN_CONDITIONS, COORDINATES } from './constants';
-import type { LocationKey, Player, BoardState } from './constants';
+import type { LocationKey, Player, BoardState, Difficulty } from './constants';
 
 const AI_PLAYER: Player = 'o';
 const HUMAN_PLAYER: Player = 'x';
@@ -56,7 +56,8 @@ const orderMoves = (board: BoardState, moves: LocationKey[], player: Player): Lo
     .map((item) => item.move);
 };
 
-export const getBestMove = (board: BoardState, depth: number = 4): LocationKey | null => {
+export const getBestMove = (board: BoardState, difficulty: Difficulty = 'Impossible'): LocationKey | null => {
+  const depth = difficulty === 'Pro' ? 2 : 4;
   const startTime = performance.now();
   let evaluations = 0;
 
@@ -67,21 +68,31 @@ export const getBestMove = (board: BoardState, depth: number = 4): LocationKey |
 
   if (availableMoves.length === 0) return null;
 
-  // --- IMMEDIATE WIN/BLOCK DETECTION ---
-  // Check for immediate win
-  for (const move of availableMoves) {
-    board[move] = AI_PLAYER;
-    const score = evaluateBoard(board);
-    delete board[move];
-    if (score === SCORE_WIN) return move;
+  // Beginner: Just choose a random move
+  if (difficulty === 'Beginner') {
+    return availableMoves[Math.floor(Math.random() * availableMoves.length)];
   }
 
-  // Check for immediate block
-  for (const move of availableMoves) {
-    board[move] = HUMAN_PLAYER;
-    const score = evaluateBoard(board);
-    delete board[move];
-    if (score === -SCORE_WIN) return move;
+  // Pro: 20% chance to skip immediate win/block detection to make it "fallible"
+  const shouldSkipDetection = difficulty === 'Pro' && Math.random() < 0.2;
+
+  // --- IMMEDIATE WIN/BLOCK DETECTION ---
+  if (!shouldSkipDetection) {
+    // Check for immediate win
+    for (const move of availableMoves) {
+      board[move] = AI_PLAYER;
+      const score = evaluateBoard(board);
+      delete board[move];
+      if (score === SCORE_WIN) return move;
+    }
+
+    // Check for immediate block
+    for (const move of availableMoves) {
+      board[move] = HUMAN_PLAYER;
+      const score = evaluateBoard(board);
+      delete board[move];
+      if (score === -SCORE_WIN) return move;
+    }
   }
 
   const minimax = (

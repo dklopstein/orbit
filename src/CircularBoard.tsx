@@ -4,16 +4,18 @@ import type { LocationKey } from './constants';
 import { useGameState } from './useGameState';
 
 const CircularBoard: React.FC = () => {
-  const { 
-    board, 
-    turn, 
-    winner, 
-    winningMoves, 
-    winningType, 
-    gameMode, 
-    isAiThinking, 
-    playMove, 
+  const {
+    board,
+    turn,
+    winner,
+    winningMoves,
+    winningType,
+    gameMode,
+    difficulty,
+    isAiThinking,
+    playMove,
     resetGame,
+    setDifficulty,
   } = useGameState();
 
   const scale = 1;
@@ -23,40 +25,44 @@ const CircularBoard: React.FC = () => {
     const [x, y] = COORDINATES[key];
     const player = board[key];
     const isWinningMove = winningMoves?.includes(key);
-    
+
     const ring = parseInt(key.slice(1, 2));
     const sliceNum = parseInt(key.slice(3));
-    const scales = [0, 0.5, 0.8, 1.05, 1.25]; // index 1-4
+    const scales = [0, 0.5, 0.8, 1.05, 1.25];
     const hitRadii = [0, 20, 28, 34, 38];
     const markerScale = scales[ring];
     const hitRadius = hitRadii[ring];
 
-    // Rotation aligns X with the radial line (s * 45 degrees + center offset 22.5)
     const xRotation = (sliceNum * 45) + 22.5;
 
     return (
-      <g 
-        key={key} 
+      <g
+        key={key}
         transform={`translate(${x * scale + offset}, ${-y * scale + offset})`}
         onClick={() => playMove(key)}
         className="cursor-pointer group"
       >
-        <circle r={hitRadius} fill="transparent" className="group-hover:fill-gray-100/20" />
-        
+        <circle r={hitRadius} fill="transparent" />
         {player && (
           <g transform={`scale(${markerScale}) ${player === 'x' ? `rotate(${xRotation})` : ''}`}>
             {player === 'x' && (
-              <g stroke={isWinningMove ? "#ef4444" : "#374151"} strokeWidth="5" strokeLinecap="round">
-                <line x1="-12" y1="-12" x2="12" y2="12" />
-                <line x1="12" y1="-12" x2="-12" y2="12" />
+              <g
+                stroke={isWinningMove ? "var(--accent-secondary)" : "var(--text-main)"}
+                strokeWidth="2.5"
+                strokeLinecap="square"
+                className="animate-fade-in"
+              >
+                <line x1="-10" y1="-10" x2="10" y2="10" />
+                <line x1="10" y1="-10" x2="-10" y2="10" />
               </g>
             )}
             {player === 'o' && (
-              <circle 
-                r="14" 
-                fill="none" 
-                stroke={isWinningMove ? "#3b82f6" : "#374151"} 
-                strokeWidth="5" 
+              <circle
+                r="12"
+                fill="none"
+                stroke={isWinningMove ? "var(--accent-primary)" : "var(--text-main)"}
+                strokeWidth="2.5"
+                className="animate-fade-in"
               />
             )}
           </g>
@@ -67,100 +73,128 @@ const CircularBoard: React.FC = () => {
 
   const getWinPath = () => {
     if (!winningMoves || !winningType) return null;
-
     const pts = winningMoves.map(key => {
       const [x, y] = COORDINATES[key];
       return { x: x * scale + offset, y: -y * scale + offset };
     });
-
     return pts.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
   };
 
-
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 p-4">
-      <h1 className="text-4xl font-bold mb-4 text-gray-800 tracking-tight">Circle Tic-Tac-Toe</h1>
-      
-      <div className="flex gap-4 mb-8">
-        <button
-          onClick={() => resetGame('1p')}
-          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-            gameMode === '1p' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-          }`}
-        >
-          1 Player (vs AI)
-        </button>
-        <button
-          onClick={() => resetGame('2p')}
-          className={`px-4 py-2 rounded-lg font-semibold transition-all ${
-            gameMode === '2p' ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'
-          }`}
-        >
-          2 Players
-        </button>
-      </div>
+    <div className="flex flex-col items-center h-[100dvh] bg-[var(--bg)] p-6 md:p-10 selection:bg-[var(--accent-primary)] selection:text-[var(--bg)] overflow-hidden">
+      <header className="w-full max-w-2xl flex items-baseline justify-between shrink-0 mb-6 animate-fade-in">
+        <h1 className="text-4xl md:text-5xl text-[var(--text-main)]">
+          orbit <span className="text-[var(--text-dim)] font-light">xo</span>
+        </h1>
+        <div className="flex gap-6 text-xs tracking-widest uppercase font-bold text-[var(--text-dim)]">
+          <button
+            onClick={() => resetGame('1p')}
+            className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '1p' ? 'text-[var(--accent-primary)]' : ''}`}
+          >
+            Solo
+          </button>
+          <button
+            onClick={() => resetGame('2p')}
+            className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '2p' ? 'text-[var(--accent-primary)]' : ''}`}
+          >
+            Duo
+          </button>
+        </div>
+      </header>
 
-      <div className="mb-6 text-2xl font-bold h-8 flex items-center justify-center gap-2">
-        {winner ? (
-          winner === 'tie' ? (
-            <span className="text-orange-600">It's a Tie!</span>
-          ) : (
-            <span className={winner === 'x' ? 'text-red-600' : 'text-blue-600'}>
-              Player {winner.toUpperCase()} Wins!
-            </span>
-          )
-        ) : isAiThinking ? (
-          <span className="text-indigo-600 flex items-center gap-2">
-            AI is thinking...
-            <span className="flex gap-1">
-              <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce"></span>
-              <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:0.2s]"></span>
-              <span className="w-1.5 h-1.5 bg-indigo-600 rounded-full animate-bounce [animation-delay:0.4s]"></span>
-            </span>
-          </span>
-        ) : (
-          <span className="text-gray-600">
-            {gameMode === '1p' && turn === 'o' ? 'AI is moving...' : `Player ${turn.toUpperCase()}'s Turn`}
-          </span>
+      <div className="flex-1 w-full max-w-2xl flex flex-col min-h-0 items-center justify-center">
+        {gameMode === '1p' && (
+          <div className="mb-8 flex gap-3 animate-fade-in animate-stagger-1 shrink-0">
+            {(['Beginner', 'Pro', 'Impossible'] as const).map((level) => (
+              <button
+                key={level}
+                onClick={() => setDifficulty(level)}
+                className={`text-[9px] tracking-[0.2em] uppercase font-black px-3 py-1.5 rounded-full border transition-all ${difficulty === level
+                    ? 'bg-[var(--text-main)] text-[var(--bg)] border-[var(--text-main)]'
+                    : 'text-[var(--text-dim)] border-[var(--border)] hover:border-[var(--text-muted)]'
+                  }`}
+              >
+                {level}
+              </button>
+            ))}
+          </div>
         )}
-      </div>
 
-      <div className="relative shadow-2xl rounded-full overflow-hidden leading-[0]">
-        <svg width="460" height="460" viewBox="20 20 460 460" className="bg-white">
-          {/* Concentric Rings */}
-          <circle cx="250" cy="250" r="60" fill="none" stroke="#f3f4f6" strokeWidth="3" />
-          <circle cx="250" cy="250" r="120" fill="none" stroke="#f3f4f6" strokeWidth="3" />
-          <circle cx="250" cy="250" r="175" fill="none" stroke="#f3f4f6" strokeWidth="3" />
-          <circle cx="250" cy="250" r="230" fill="none" stroke="#f3f4f6" strokeWidth="3" />
-          
-          <g stroke="#f3f4f6" strokeWidth="3">
-            <line x1="250" y1="20" x2="250" y2="480" />
-            <line x1="20" y1="250" x2="480" y2="250" />
-            <line x1="87" y1="87" x2="413" y2="413" />
-            <line x1="87" y1="413" x2="413" y2="87" />
-          </g>
-
-          {winningMoves && (
-            <path
-              d={getWinPath() || ''}
-              fill="none"
-              stroke="rgba(0,0,0,0.15)"
-              strokeWidth="14"
-              strokeLinejoin="round"
-              strokeLinecap="round"
-            />
+        <div className="mb-6 h-6 flex items-center justify-center shrink-0 animate-fade-in animate-stagger-2">
+          {winner ? (
+            <span className={`text-sm tracking-[0.3em] uppercase font-black ${winner === 'tie' ? 'text-[var(--text-muted)]' : winner === 'x' ? 'text-[var(--accent-secondary)]' : 'text-[var(--accent-primary)]'}`}>
+              {winner === 'tie' ? "Stalemate" : `Player ${winner} Wins`}
+            </span>
+          ) : isAiThinking ? (
+            <span className="text-[var(--accent-primary)] text-[10px] tracking-[0.4em] uppercase font-black animate-pulse">
+              Calculating Orbit...
+            </span>
+          ) : (
+            <span className="text-[var(--text-dim)] text-[10px] tracking-[0.4em] uppercase font-black">
+              {gameMode === '1p' && turn === 'o' ? 'AI Sequence' : `Awaiting Player ${turn.toUpperCase()}`}
+            </span>
           )}
+        </div>
 
-          {(Object.keys(COORDINATES) as LocationKey[]).map(renderCell)}
-        </svg>
+        <div className="relative w-full flex-1 min-h-0 flex items-center justify-center animate-fade-in animate-stagger-2">
+          <div className="absolute inset-0 rounded-full bg-[oklch(75%_0.12_260_/_0.03)] blur-3xl pointer-events-none"></div>
+
+          <svg
+            viewBox="0 0 500 500"
+            className="w-full h-full max-w-full max-h-full transition-transform duration-700 relative z-10"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <circle cx="250" cy="250" r="60" fill="none" stroke="var(--border)" strokeWidth="1" />
+            <circle cx="250" cy="250" r="120" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+            <circle cx="250" cy="250" r="175" fill="none" stroke="var(--border)" strokeWidth="1.5" />
+            <circle cx="250" cy="250" r="230" fill="none" stroke="var(--border)" strokeWidth="2" />
+
+            <g stroke="var(--border)" strokeWidth="1">
+              {[0, 45, 90, 135, 180, 225, 270, 315].map(angle => (
+                <line
+                  key={angle}
+                  x1="250" y1="250"
+                  x2={250 + 230 * Math.cos(angle * Math.PI / 180)}
+                  y2={250 + 230 * Math.sin(angle * Math.PI / 180)}
+                />
+              ))}
+            </g>
+
+            {winningMoves && (
+              <path
+                d={getWinPath() || ''}
+                fill="none"
+                stroke="var(--text-main)"
+                strokeWidth="1"
+                strokeDasharray="4 4"
+                className="animate-[dash_2s_linear_infinite]"
+              />
+            )}
+
+            {(Object.keys(COORDINATES) as LocationKey[]).map(renderCell)}
+          </svg>
+        </div>
+
+        <button
+          onClick={() => resetGame()}
+          className="mt-8 group flex flex-col items-center gap-2 shrink-0 animate-fade-in animate-stagger-3"
+        >
+          <span className="text-[var(--text-dim)] text-[10px] tracking-[0.3em] uppercase font-bold group-hover:text-[var(--text-main)] transition-colors">
+            Reset System
+          </span>
+          <div className="w-8 h-[1px] bg-[var(--border)] group-hover:w-16 group-hover:bg-[var(--text-main)] transition-all duration-500"></div>
+        </button>
       </div>
 
-      <button
-        onClick={() => resetGame()}
-        className="mt-10 px-10 py-4 bg-gray-900 text-white rounded-2xl font-bold shadow-xl hover:bg-gray-800 transition-all transform hover:scale-105 active:scale-95"
-      >
-        Restart Game
-      </button>
+      <footer className="mt-8 text-[var(--text-dim)] text-[9px] tracking-[0.2em] uppercase font-medium shrink-0 animate-fade-in animate-stagger-3">
+        Refined Tactical Environment v2.0
+      </footer>
+
+      <style>{`
+        @keyframes dash {
+          to { stroke-dashoffset: -20; }
+        }
+      `}</style>
     </div>
   );
 };
