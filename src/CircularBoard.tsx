@@ -4,16 +4,16 @@ import type { LocationKey } from './constants';
 import { useGameState } from './useGameState';
 
 const CircularBoard: React.FC = () => {
-  const { 
-    board, 
-    turn, 
-    winner, 
-    winningMoves, 
-    winningType, 
-    gameMode, 
+  const {
+    board,
+    turn,
+    winner,
+    winningMoves,
+    winningType,
+    gameMode,
     difficulty,
-    isAiThinking, 
-    playMove, 
+    isAiThinking,
+    playMove,
     resetGame,
     setDifficulty,
   } = useGameState();
@@ -49,7 +49,7 @@ const CircularBoard: React.FC = () => {
     const [x, y] = COORDINATES[key];
     const player = board[key];
     const isWinningMove = winningMoves?.includes(key);
-    
+
     const ring = parseInt(key.slice(1, 2));
     const sliceNum = parseInt(key.slice(3));
     const scales = [0, 0.5, 0.8, 1.05, 1.25];
@@ -60,8 +60,8 @@ const CircularBoard: React.FC = () => {
     const xRotation = (sliceNum * 45) + 22.5;
 
     return (
-      <g 
-        key={key} 
+      <g
+        key={key}
         transform={`translate(${x * scale + offset}, ${-y * scale + offset})`}
         onClick={() => playMove(key)}
         className="cursor-pointer group"
@@ -70,9 +70,9 @@ const CircularBoard: React.FC = () => {
         {player && (
           <g transform={`scale(${markerScale}) ${player === 'x' ? `rotate(${xRotation})` : ''}`}>
             {player === 'x' && (
-              <g 
-                stroke={isWinningMove ? "var(--accent-secondary)" : "var(--text-main)"} 
-                strokeWidth="2.5" 
+              <g
+                stroke={isWinningMove ? "var(--accent-secondary)" : "var(--text-main)"}
+                strokeWidth="2.5"
                 strokeLinecap="square"
                 className="animate-fade-in"
               >
@@ -81,11 +81,11 @@ const CircularBoard: React.FC = () => {
               </g>
             )}
             {player === 'o' && (
-              <circle 
-                r="12" 
-                fill="none" 
-                stroke={isWinningMove ? "var(--accent-primary)" : "var(--text-main)"} 
-                strokeWidth="2.5" 
+              <circle
+                r="12"
+                fill="none"
+                stroke={isWinningMove ? "var(--accent-primary)" : "var(--text-main)"}
+                strokeWidth="2.5"
                 className="animate-fade-in"
               />
             )}
@@ -107,41 +107,66 @@ const CircularBoard: React.FC = () => {
   return (
     <div className="flex flex-col items-center h-[100dvh] bg-[var(--bg)] p-6 md:p-10 selection:bg-[var(--accent-primary)] selection:text-[var(--bg)] overflow-hidden">
       <header className="w-full max-w-2xl flex items-baseline justify-between shrink-0 mb-6 animate-fade-in">
-        <h1 className="text-4xl md:text-5xl text-[var(--text-main)]">
-          orbit
-        </h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-4xl md:text-5xl text-[var(--text-main)]">
+            orbit
+          </h1>
+          <svg width="48" height="48" viewBox="0 0 100 100" className="text-[var(--accent-primary)] opacity-90">
+            <g transform="rotate(-45 50 50)">
+              <ellipse
+                cx="50" cy="50" rx="38" ry="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="5"
+                strokeOpacity="0.25"
+              />
+              <circle
+                r="8"
+                fill="currentColor"
+                stroke="var(--bg)"
+                strokeWidth="6"
+              >
+                <animateMotion
+                  dur="3s"
+                  repeatCount="indefinite"
+                  path="M 12,50 a 38,14 0 1,0 76,0 a 38,14 0 1,0 -76,0"
+                />
+              </circle>
+            </g>
+          </svg>
+        </div>
         <div className="flex items-center gap-8">
           <div className="flex gap-6 text-xs tracking-widest uppercase font-bold text-[var(--text-dim)]">
-            <button 
+            <button
               onClick={() => resetGame('1p')}
               className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '1p' ? 'text-[var(--accent-primary)]' : ''}`}
             >
               SOLO
             </button>
-            <button 
+            <button
               onClick={() => resetGame('2p')}
               className={`hover:text-[var(--text-main)] transition-colors ${gameMode === '2p' ? 'text-[var(--accent-primary)]' : ''}`}
             >
               DUO
             </button>
           </div>
-          
+
           <div className="w-[1px] h-4 bg-[var(--border)]"></div>
 
-          <button 
+          <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="text-[var(--text-dim)] hover:text-[var(--text-main)] transition-colors"
             title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
             {theme === 'dark' ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5" /><line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" /><line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" /><line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" /><line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" /></svg>
             ) : (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
             )}
           </button>
         </div>
       </header>
-      
+
       <div className="flex-1 w-full max-w-2xl flex flex-col min-h-0 items-center justify-center">
         <div className={`grid-transition ${gameMode === '1p' ? 'grid-transition-open mb-8' : ''} shrink-0`}>
           <div className={`opacity-transition ${gameMode === '1p' ? 'opacity-transition-visible' : ''} flex gap-3`}>
@@ -149,11 +174,10 @@ const CircularBoard: React.FC = () => {
               <button
                 key={level}
                 onClick={() => setDifficulty(level)}
-                className={`text-[9px] tracking-[0.2em] uppercase font-black px-3 py-1.5 rounded-full border transition-all ${
-                  difficulty === level 
-                    ? 'bg-[var(--text-main)] text-[var(--bg)] border-[var(--text-main)]' 
-                    : 'text-[var(--text-dim)] border-[var(--border)] hover:border-[var(--text-muted)]'
-                }`}
+                className={`text-[9px] tracking-[0.2em] uppercase font-black px-3 py-1.5 rounded-full border transition-all ${difficulty === level
+                  ? 'bg-[var(--text-main)] text-[var(--bg)] border-[var(--text-main)]'
+                  : 'text-[var(--text-dim)] border-[var(--border)] hover:border-[var(--text-muted)]'
+                  }`}
               >
                 {level}
               </button>
@@ -179,9 +203,9 @@ const CircularBoard: React.FC = () => {
 
         <div className="relative w-full flex-1 min-h-0 flex items-center justify-center animate-fade-in animate-stagger-2">
           <div className="absolute inset-0 rounded-full bg-[var(--accent-primary)] opacity-[0.03] blur-3xl pointer-events-none"></div>
-          
-          <svg 
-            viewBox="0 0 500 500" 
+
+          <svg
+            viewBox="0 0 500 500"
             className="w-full h-full max-w-full max-h-full transition-transform duration-700 relative z-10"
             preserveAspectRatio="xMidYMid meet"
           >
@@ -189,14 +213,14 @@ const CircularBoard: React.FC = () => {
             <circle cx="250" cy="250" r="120" fill="none" stroke="var(--border)" strokeWidth="1.5" />
             <circle cx="250" cy="250" r="175" fill="none" stroke="var(--border)" strokeWidth="1.5" />
             <circle cx="250" cy="250" r="230" fill="none" stroke="var(--border)" strokeWidth="2" />
-            
+
             <g stroke="var(--border)" strokeWidth="1">
               {[0, 45, 90, 135, 180, 225, 270, 315].map(angle => (
-                <line 
+                <line
                   key={angle}
-                  x1="250" y1="250" 
-                  x2={250 + 230 * Math.cos(angle * Math.PI / 180)} 
-                  y2={250 + 230 * Math.sin(angle * Math.PI / 180)} 
+                  x1="250" y1="250"
+                  x2={250 + 230 * Math.cos(angle * Math.PI / 180)}
+                  y2={250 + 230 * Math.sin(angle * Math.PI / 180)}
                 />
               ))}
             </g>
