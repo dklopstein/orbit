@@ -18,11 +18,29 @@ const CircularBoard: React.FC = () => {
     setDifficulty,
   } = useGameState();
 
-  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  });
+
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    localStorage.setItem('theme', theme);
     document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+
+    if (!mounted) {
+      setMounted(true);
+      return;
+    }
+
+    document.documentElement.classList.add('theme-transitioning');
+    const timer = setTimeout(() => {
+      document.documentElement.classList.remove('theme-transitioning');
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [theme, mounted]);
 
   const scale = 1;
   const offset = 250;
@@ -160,7 +178,7 @@ const CircularBoard: React.FC = () => {
         </div>
 
         <div className="relative w-full flex-1 min-h-0 flex items-center justify-center animate-fade-in animate-stagger-2">
-          <div className="absolute inset-0 rounded-full bg-[oklch(75%_0.12_260_/_0.03)] blur-3xl pointer-events-none"></div>
+          <div className="absolute inset-0 rounded-full bg-[var(--accent-primary)] opacity-[0.03] blur-3xl pointer-events-none"></div>
           
           <svg 
             viewBox="0 0 500 500" 
