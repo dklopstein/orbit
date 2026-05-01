@@ -4,15 +4,19 @@ import type { LocationKey, Player, BoardState } from './constants';
 const AI_PLAYER: Player = 'o';
 const HUMAN_PLAYER: Player = 'x';
 
+const ALL_MOVES = Object.keys(COORDINATES) as LocationKey[];
+const WIN_CONDITION_LIST = Object.values(WIN_CONDITIONS) as LocationKey[][];
+
 export const evaluateBoard = (board: BoardState): number => {
   let score = 0;
 
-  for (const moves of Object.values(WIN_CONDITIONS)) {
+  for (let i = 0; i < WIN_CONDITION_LIST.length; i++) {
+    const moves = WIN_CONDITION_LIST[i];
     let aiCount = 0;
     let humanCount = 0;
 
-    for (const move of moves) {
-      const player = board[move as LocationKey];
+    for (let j = 0; j < moves.length; j++) {
+      const player = board[moves[j]];
       if (player === AI_PLAYER) aiCount++;
       else if (player === HUMAN_PLAYER) humanCount++;
     }
@@ -22,12 +26,12 @@ export const evaluateBoard = (board: BoardState): number => {
 
     if (aiCount > 0 && humanCount === 0) {
       if (aiCount === 3) score += 5000;
-      if (aiCount === 2) score += 500;
-      if (aiCount === 1) score += 50;
+      else if (aiCount === 2) score += 500;
+      else score += 50;
     } else if (humanCount > 0 && aiCount === 0) {
-      if (humanCount === 3) score -= 8000; // Penalize human 3-in-a-row more to force blocks
-      if (humanCount === 2) score -= 800;
-      if (humanCount === 1) score -= 80;
+      if (humanCount === 3) score -= 8000;
+      else if (humanCount === 2) score -= 800;
+      else score -= 80;
     }
   }
 
@@ -44,51 +48,55 @@ const minimax = (
   const score = evaluateBoard(board);
   if (Math.abs(score) >= 1000000 || depth === 0) return score;
 
-  const availableMoves = (Object.keys(COORDINATES) as LocationKey[]).filter(
-    (key) => !board[key]
-  );
-
-  if (availableMoves.length === 0) return 0;
-
   if (isMaximizing) {
     let maxEval = -Infinity;
-    for (const move of availableMoves) {
+    for (let i = 0; i < ALL_MOVES.length; i++) {
+      const move = ALL_MOVES[i];
+      if (board[move]) continue;
+      
       board[move] = AI_PLAYER;
       const ev = minimax(board, depth - 1, alpha, beta, false);
       delete board[move];
-      maxEval = Math.max(maxEval, ev);
-      alpha = Math.max(alpha, ev);
+      
+      if (ev > maxEval) maxEval = ev;
+      if (ev > alpha) alpha = ev;
       if (beta <= alpha) break;
     }
-    return maxEval;
+    return maxEval === -Infinity ? 0 : maxEval;
   } else {
     let minEval = Infinity;
-    for (const move of availableMoves) {
+    for (let i = 0; i < ALL_MOVES.length; i++) {
+      const move = ALL_MOVES[i];
+      if (board[move]) continue;
+
       board[move] = HUMAN_PLAYER;
       const ev = minimax(board, depth - 1, alpha, beta, true);
       delete board[move];
-      minEval = Math.min(minEval, ev);
-      beta = Math.min(beta, ev);
+      
+      if (ev < minEval) minEval = ev;
+      if (ev < beta) beta = ev;
       if (beta <= alpha) break;
     }
-    return minEval;
+    return minEval === Infinity ? 0 : minEval;
   }
 };
 
-export const getBestMove = (board: BoardState, depth: number = 3): LocationKey | null => {
-  const availableMoves = (Object.keys(COORDINATES) as LocationKey[]).filter(
-    (key) => !board[key]
-  );
+export const getBestMove = (board: BoardState, depth: number = 2): LocationKey | null => {
+  const availableMoves: LocationKey[] = [];
+  for (let i = 0; i < ALL_MOVES.length; i++) {
+    if (!board[ALL_MOVES[i]]) availableMoves.push(ALL_MOVES[i]);
+  }
 
   if (availableMoves.length === 0) return null;
 
   let bestScore = -Infinity;
   let bestMove: LocationKey | null = null;
 
-  // Shuffle available moves to add some variety to AI play
-  const shuffledMoves = availableMoves.sort(() => Math.random() - 0.5);
+  // Shuffle for variety
+  availableMoves.sort(() => Math.random() - 0.5);
 
-  for (const move of shuffledMoves) {
+  for (let i = 0; i < availableMoves.length; i++) {
+    const move = availableMoves[i];
     board[move] = AI_PLAYER;
     const score = minimax(board, depth - 1, -Infinity, Infinity, false);
     delete board[move];

@@ -50,12 +50,12 @@ export const useGameState = () => {
       setIsAiThinking(true);
       // Small timeout to let the UI update and show "AI is thinking"
       const timer = setTimeout(() => {
-        const bestMove = getBestMove({ ...board }, 3);
+        const bestMove = getBestMove({ ...board }, 2);
         if (bestMove) {
           playMove(bestMove);
         }
         setIsAiThinking(false);
-      }, 500);
+      }, 300);
       return () => clearTimeout(timer);
     }
   }, [gameMode, turn, winner, board, isAiThinking, playMove]);
