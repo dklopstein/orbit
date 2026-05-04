@@ -4,6 +4,7 @@ import type { LocationKey } from './constants';
 import { useGameState } from './useGameState';
 import { useMultiplayer } from './useMultiplayer';
 import LobbyOverlay from './LobbyOverlay';
+import RulesOverlay from './RulesOverlay';
 
 const CircularBoard: React.FC = () => {
   const {
@@ -58,6 +59,7 @@ const CircularBoard: React.FC = () => {
 
   const [mounted, setMounted] = useState(false);
   const [showLobby, setShowLobby] = useState(false);
+  const [showRules, setShowRules] = useState(false);
 
   useEffect(() => {
     if (gameMode === 'online' && status !== 'connected') {
@@ -161,6 +163,10 @@ const CircularBoard: React.FC = () => {
         />
       )}
 
+      {showRules && (
+        <RulesOverlay onClose={() => setShowRules(false)} />
+      )}
+
       <header className="w-full max-w-2xl flex items-baseline justify-between shrink-0 mb-6 animate-fade-in">
         <div className="flex items-center gap-4">
           <h1 className="text-4xl md:text-5xl text-[var(--text-main)] flex items-center">
@@ -255,6 +261,14 @@ const CircularBoard: React.FC = () => {
           </div>
 
           <div className="w-[1px] h-4 bg-[var(--border)]"></div>
+
+          <button
+            onClick={() => setShowRules(true)}
+            className="text-[var(--text-dim)] hover:text-[var(--text-main)] transition-colors"
+            title="How to play"
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+          </button>
 
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
