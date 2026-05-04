@@ -15,6 +15,7 @@ export const useGameState = () => {
   const [difficulty, setDifficulty] = useState<Difficulty>('Impossible');
   const [localPlayer, setLocalPlayer] = useState<Player | null>(null);
   const [isAiThinking, setIsAiThinking] = useState(false);
+  const [lastWinner, setLastWinner] = useState<Player | 'tie' | null>(null);
   const isAiThinkingRef = useRef(false);
 
   const checkWinner = useCallback((currentBoard: BoardState) => {
@@ -82,16 +83,33 @@ export const useGameState = () => {
     }
   }, [gameMode, turn, winner, board, playMove, difficulty]);
 
+  useEffect(() => {
+    if (winner && winner !== 'tie') {
+      setLastWinner(winner);
+    }
+  }, [winner]);
+
   const resetGame = useCallback((mode?: GameMode) => {
+    const nextMode = mode || gameMode;
+    const modeChanged = mode && mode !== gameMode;
+    
     setBoard({});
-    setTurn('x');
+    
+    // Determine next starting player
+    let startingPlayer: Player = 'x';
+    if (!modeChanged && (nextMode === '2p' || nextMode === 'online')) {
+      if (lastWinner === 'x') startingPlayer = 'o';
+      if (lastWinner === 'o') startingPlayer = 'x';
+    }
+    
+    setTurn(startingPlayer);
     setWinner(null);
     setWinningMoves(null);
     setWinningType(null);
     isAiThinkingRef.current = false;
     setIsAiThinking(false);
     if (mode) setGameMode(mode);
-  }, []);
+  }, [gameMode, lastWinner]);
 
   return {
     board,
