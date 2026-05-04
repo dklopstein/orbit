@@ -379,7 +379,7 @@ const CircularBoard: React.FC = () => {
 
       <style>{`
         @keyframes dash {
-          to { stroke-dashoffset: -20; }
+          to { stroke-dashoffset: -8; }
         }
       `}</style>
     </div>
