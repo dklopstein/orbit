@@ -188,7 +188,7 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
         </span>
         <style>{`
           @keyframes dash {
-            to { stroke-dashoffset: -16; }
+            to { stroke-dashoffset: -32; }
           }
         `}</style>
       </div>
