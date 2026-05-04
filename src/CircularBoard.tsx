@@ -368,7 +368,7 @@ const CircularBoard: React.FC = () => {
           className="mt-6 md:mt-10 group flex flex-col items-center gap-2 shrink-0 animate-fade-in animate-stagger-3 disabled:opacity-30 disabled:cursor-not-allowed"
         >
           <span className="text-[var(--text-dim)] text-[10px] tracking-[0.3em] uppercase font-bold group-hover:text-[var(--text-main)] transition-colors">
-            {gameMode === 'online' ? 'Rematch' : 'Reset System'}
+            Reset System
           </span>
           <div className="w-8 h-[1px] bg-[var(--border)] group-hover:w-16 group-hover:bg-[var(--text-main)] transition-all duration-500"></div>
         </button>
