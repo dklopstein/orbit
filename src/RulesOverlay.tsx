@@ -186,6 +186,11 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
         <span className="mt-8 text-[var(--text-dim)] text-[10px] tracking-[0.4em] uppercase font-bold animate-pulse text-center">
           Click anywhere to minimize
         </span>
+        <style>{`
+          @keyframes dash {
+            to { stroke-dashoffset: -32; }
+          }
+        `}</style>
       </div>
     );
   };
