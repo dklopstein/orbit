@@ -201,14 +201,14 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
           <div className="w-12 h-[1px] bg-[var(--accent-primary)]"></div>
         </div>
 
-        <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-8 text-[var(--text-main)]">
-          <div className="flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-12 text-[var(--text-main)]">
+          <div className="flex flex-col items-center text-center gap-4 max-w-xl mx-auto">
             <h3 className="text-xs tracking-[0.3em] uppercase font-bold text-[var(--accent-primary)]">Objectives</h3>
             <p className="text-sm leading-relaxed text-[var(--text-dim)]">
               Navigate the orbital grid and align <span className="text-[var(--text-main)] font-bold">four</span> of your markers in a sequence. 
               The circular board offers unique pathways that conventional grids lack.
             </p>
-            <div className="flex flex-col gap-2 mt-2">
+            <div className="flex gap-8 mt-2">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-[var(--accent-secondary)]"></div>
                 <span className="text-[10px] tracking-widest uppercase font-bold">Player X (Interceptor)</span>
@@ -220,9 +220,9 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
             </div>
           </div>
 
-          <div className="flex flex-col gap-4">
-            <h3 className="text-xs tracking-[0.3em] uppercase font-bold text-[var(--accent-secondary)]">Win Conditions</h3>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-6">
+            <h3 className="text-xs tracking-[0.3em] uppercase font-bold text-[var(--accent-secondary)] text-center">Win Conditions</h3>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <MiniBoard 
                 title="Radial" 
                 description="4 aligned center to edge" 
