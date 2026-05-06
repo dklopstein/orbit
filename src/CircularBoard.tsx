@@ -312,7 +312,7 @@ const CircularBoard: React.FC = () => {
           </div>
         </div>
 
-        <div className="mb-6 h-6 flex items-center justify-center shrink-0 animate-fade-in animate-stagger-2">
+        <div className={`mb-6 h-6 flex items-center justify-center shrink-0 animate-fade-in animate-stagger-2 transition-all duration-500 ${isResetting ? 'opacity-0 scale-95 blur-sm' : 'opacity-100 scale-100 blur-0'}`}>
           {winner ? (
             <span className={`text-sm tracking-[0.3em] uppercase font-black ${winner === 'tie' ? 'text-[var(--text-muted)]' : winner === 'x' ? 'text-[var(--accent-secondary)]' : 'text-[var(--accent-primary)]'}`}>
               {winner === 'tie' ? "Stalemate" : `Player ${winner} Wins`}
