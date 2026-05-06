@@ -210,7 +210,7 @@ const CircularBoard: React.FC = () => {
                 </g>
               </svg>
 
-              <span className="relative z-10 pointer-events-none">o</span>
+              <span className="relative z-10 pointer-events-none transition-colors duration-700">o</span>
 
               {/* Front layer - bottom-left half of the orbit */}
               <svg
