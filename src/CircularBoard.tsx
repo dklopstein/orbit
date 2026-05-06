@@ -45,10 +45,16 @@ const CircularBoard: React.FC = () => {
   };
 
   const handleReset = (mode?: any) => {
-    resetGame(mode);
-    if (gameMode === 'online') {
-      sendReset();
-    }
+    if (isResetting) return;
+    setIsResetting(true);
+
+    setTimeout(() => {
+      resetGame(mode);
+      if (gameMode === 'online') {
+        sendReset();
+      }
+      setIsResetting(false);
+    }, 600);
   };
 
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -60,6 +66,7 @@ const CircularBoard: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const [showLobby, setShowLobby] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   useEffect(() => {
     if (gameMode === 'online' && status !== 'connected') {
@@ -111,7 +118,10 @@ const CircularBoard: React.FC = () => {
       >
         <circle r={hitRadius} fill="transparent" />
         {player && (
-          <g transform={`scale(${markerScale}) ${player === 'x' ? `rotate(${xRotation})` : ''}`}>
+          <g 
+            transform={`scale(${markerScale}) ${player === 'x' ? `rotate(${xRotation})` : ''}`}
+            className={isResetting ? 'animate-reset-implode' : ''}
+          >
             {player === 'x' && (
               <g
                 stroke={isWinningMove ? "var(--accent-secondary)" : "var(--text-main)"}
@@ -354,7 +364,7 @@ const CircularBoard: React.FC = () => {
                 stroke="var(--text-main)"
                 strokeWidth="1"
                 strokeDasharray="4 4"
-                className="animate-[dash_2s_linear_infinite]"
+                className={`animate-[dash_2s_linear_infinite] ${isResetting ? 'animate-reset-fade' : ''}`}
               />
             )}
 
@@ -380,6 +390,30 @@ const CircularBoard: React.FC = () => {
       <style>{`
         @keyframes dash {
           to { stroke-dashoffset: -24; }
+        }
+        .animate-reset-implode {
+          animation: implode 0.6s cubic-bezier(0.4, 0, 1, 1) forwards;
+        }
+        .animate-reset-fade {
+          animation: reset-fade 0.6s ease-out forwards;
+        }
+        @keyframes reset-fade {
+          to { opacity: 0; }
+        }
+        @keyframes implode {
+          0% { 
+            transform: scale(1);
+            opacity: 1;
+            filter: brightness(1);
+          }
+          40% {
+            filter: brightness(2) drop-shadow(0 0 10px var(--accent-primary));
+          }
+          100% { 
+            transform: scale(0) rotate(180deg);
+            opacity: 0;
+            filter: brightness(5) blur(4px);
+          }
         }
       `}</style>
     </div>
