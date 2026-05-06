@@ -18,6 +18,52 @@ A sophisticated circular Tic-Tac-Toe variant built with React, TypeScript, and V
   - High-precision SVG-based game board with interactive animations and dashed win-path trajectories.
   - Zero layout shift architecture.
 
+## 🤖 AI Logic (SOLO Mode)
+
+Orbit features a multi-tiered AI that adapts to your skill level. The engine uses a combination of immediate-threat detection and state-space search to challenge players.
+
+### Decision Workflow
+
+The AI follows a structured priority list to determine the optimal move:
+
+```mermaid
+graph TD
+    A[Start Turn] --> B{Difficulty?}
+    B -- Beginner --> C[Random Move]
+    B -- Pro --> D{30% Chance?}
+    D -- Yes --> C
+    D -- No --> E[Immediate Win Check]
+    B -- Impossible --> E
+    E --> F{Can AI Win?}
+    F -- Yes --> G[Take Winning Move]
+    F -- No --> H[Immediate Block Check]
+    H --> I{Can Human Win?}
+    I -- Yes --> J[Block Human]
+    I -- No --> K[Minimax Search]
+    K --> L[Evaluate Board State]
+    L --> M[Apply Alpha-Beta Pruning]
+    M --> N[Select Best Rated Move]
+```
+
+### Heuristic Engine
+
+The AI evaluates the board using a weighted heuristic system. It analyzes all 32 possible win conditions (Radial, Circular, and Spiral) and assigns scores based on marker density:
+
+| Alignment | AI Score | Human Score | Priority |
+| :--- | :--- | :--- | :--- |
+| **4 in a row** | +1,000,000 | -1,000,000 | Absolute |
+| **3 in a row** | +10,000 | -15,000 | High (Defensive) |
+| **2 in a row** | +500 | -500 | Medium |
+| **1 in a row** | +50 | -50 | Low |
+
+*Note: The AI prioritizes blocking a human's 3-in-a-row (-15,000) over creating its own (+10,000), resulting in a more defensive and challenging opponent.*
+
+### Search Depth
+
+- **Beginner**: 0 (Random selection).
+- **Pro**: 2 levels (Looks 1 turn ahead) with a 30% "blunder" rate.
+- **Impossible**: 4 levels (Looks 2 full turns ahead).
+
 ## 🛠️ Technical Stack
 
 - **React 19** & **TypeScript**: For robust state management and type-safe game logic.
