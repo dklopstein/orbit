@@ -58,16 +58,15 @@ The AI evaluates the board using a weighted heuristic system. It analyzes all 32
 
 *Note: The AI prioritizes blocking a human's 3-in-a-row (-15,000) over creating its own (+10,000), resulting in a more defensive and challenging opponent.*
 
-### Search Depth
+### Multi-threaded Architecture
 
-- **Beginner**: 0 (Random selection).
-- **Pro**: 2 levels (Looks 1 turn ahead) with a 30% "blunder" rate.
-- **Impossible**: 4 levels (Looks 2 full turns ahead).
+To ensure a smooth 60fps experience, Orbit offloads all AI calculations to a **Web Worker**. This prevents the complex Minimax search from blocking the main UI thread, ensuring that orbital animations and interactions remain fluid even when the AI is processing deep decision trees on "Impossible" difficulty.
 
 ## 🛠️ Technical Stack
 
 - **React 19** & **TypeScript**: For robust state management and type-safe game logic.
 - **Tailwind CSS**: Precision styling using the OKLCH color system for better perceptual uniformity.
+- **Web Workers**: For backgrounding heavy CPU tasks (AI) to maintain UI responsiveness.
 - **PeerJS**: For decentralized, real-time WebRTC connectivity.
 - **Vite**: Ultra-fast development environment and optimized production builds.
 - **Vercel**: Automated CI/CD and global edge hosting.
