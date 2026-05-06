@@ -35,25 +35,25 @@ const LobbyOverlay: React.FC<LobbyOverlayProps> = ({ status, lobbyCode, onHost, 
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg)] bg-opacity-95 backdrop-blur-sm ${isExiting ? 'animate-fade-out' : 'animate-fade-in'}`}>
-      <div className="w-full max-w-md p-8 flex flex-col items-center gap-8">
+      <div className="w-full max-w-md p-6 sm:p-8 flex flex-col items-center gap-6 sm:gap-8">
         <div className="flex flex-col items-center gap-2">
-          <h2 className="text-2xl tracking-[0.2em] uppercase font-black text-[var(--text-main)]">
+          <h2 className="text-xl sm:text-2xl tracking-[0.2em] uppercase font-black text-[var(--text-main)] text-center">
             Mission Control
           </h2>
           <div className="w-12 h-[1px] bg-[var(--accent-primary)]"></div>
         </div>
 
         {status === 'disconnected' && (
-          <div className="w-full flex flex-col gap-6">
+          <div className="w-full flex flex-col gap-4 sm:gap-6">
             <button
               onClick={onHost}
-              className="w-full py-4 border border-[var(--border)] rounded-lg hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)] transition-all group flex flex-col items-center gap-1"
+              className="w-full py-3 sm:py-4 border border-[var(--border)] rounded-lg hover:border-[var(--accent-primary)] hover:text-[var(--accent-primary)] transition-all group flex flex-col items-center gap-1"
             >
-              <span className="text-xs tracking-[0.3em] uppercase font-bold">Initialize Host</span>
-              <span className="text-[10px] text-[var(--text-dim)] group-hover:text-[var(--accent-primary)] opacity-50">Generate a new lobby code</span>
+              <span className="text-[10px] sm:text-xs tracking-[0.3em] uppercase font-bold">Initialize Host</span>
+              <span className="text-[8px] sm:text-[10px] text-[var(--text-dim)] group-hover:text-[var(--accent-primary)] opacity-50">Generate a new lobby code</span>
             </button>
 
-            <div className="relative flex items-center justify-center py-4">
+            <div className="relative flex items-center justify-center py-2 sm:py-4">
               <div className="absolute w-full h-[1px] bg-[var(--border)] opacity-30"></div>
               <span className="relative px-4 bg-[var(--bg)] text-[10px] tracking-widest text-[var(--text-dim)] uppercase">Or</span>
             </div>
