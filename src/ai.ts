@@ -69,30 +69,26 @@ export const getBestMove = (board: BoardState, difficulty: Difficulty = 'Impossi
   if (availableMoves.length === 0) return null;
 
   // Beginner: Just choose a random move
-  if (difficulty === 'Beginner') {
+  // Pro: 30% chance to choose a random move to make it easier
+  if (difficulty === 'Beginner' || (difficulty === 'Pro' && Math.random() < 0.3)) {
     return availableMoves[Math.floor(Math.random() * availableMoves.length)];
   }
 
-  // Pro: 20% chance to skip immediate win/block detection to make it "fallible"
-  const shouldSkipDetection = difficulty === 'Pro' && Math.random() < 0.2;
-
   // --- IMMEDIATE WIN/BLOCK DETECTION ---
-  if (!shouldSkipDetection) {
-    // Check for immediate win
-    for (const move of availableMoves) {
-      board[move] = AI_PLAYER;
-      const score = evaluateBoard(board);
-      delete board[move];
-      if (score === SCORE_WIN) return move;
-    }
+  // Check for immediate win
+  for (const move of availableMoves) {
+    board[move] = AI_PLAYER;
+    const score = evaluateBoard(board);
+    delete board[move];
+    if (score === SCORE_WIN) return move;
+  }
 
-    // Check for immediate block
-    for (const move of availableMoves) {
-      board[move] = HUMAN_PLAYER;
-      const score = evaluateBoard(board);
-      delete board[move];
-      if (score === -SCORE_WIN) return move;
-    }
+  // Check for immediate block
+  for (const move of availableMoves) {
+    board[move] = HUMAN_PLAYER;
+    const score = evaluateBoard(board);
+    delete board[move];
+    if (score === -SCORE_WIN) return move;
   }
 
   const minimax = (
