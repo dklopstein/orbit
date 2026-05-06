@@ -193,36 +193,36 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
 
   return (
     <div className={`fixed inset-0 z-50 flex items-center justify-center bg-[var(--bg)] bg-opacity-95 backdrop-blur-sm p-4 ${isExiting ? 'animate-fade-out' : 'animate-fade-in'}`}>
-      <div className="w-full max-w-2xl flex flex-col items-center gap-8 overflow-y-auto max-h-full py-8">
+      <div className="w-full max-w-2xl flex flex-col items-center gap-6 sm:gap-8 overflow-y-auto max-h-full py-6 sm:py-8">
         <div className="flex flex-col items-center gap-2">
-          <h2 className="text-2xl tracking-[0.2em] uppercase font-black text-[var(--text-main)]">
+          <h2 className="text-xl sm:text-2xl tracking-[0.2em] uppercase font-black text-[var(--text-main)]">
             Flight Manual
           </h2>
           <div className="w-12 h-[1px] bg-[var(--accent-primary)]"></div>
         </div>
 
-        <div className="w-full flex flex-col gap-12 text-[var(--text-main)]">
-          <div className="flex flex-col items-center text-center gap-4 max-w-xl mx-auto">
-            <h3 className="text-xs tracking-[0.3em] uppercase font-bold text-[var(--accent-primary)]">Objectives</h3>
-            <p className="text-sm leading-relaxed text-[var(--text-dim)]">
+        <div className="w-full flex flex-col gap-8 sm:gap-12 text-[var(--text-main)]">
+          <div className="flex flex-col items-center text-center gap-4 max-w-xl mx-auto px-4">
+            <h3 className="text-[10px] sm:text-xs tracking-[0.3em] uppercase font-bold text-[var(--accent-primary)]">Objectives</h3>
+            <p className="text-xs sm:text-sm leading-relaxed text-[var(--text-dim)]">
               Navigate the orbital grid and align <span className="text-[var(--text-main)] font-bold">four</span> of your markers in a sequence. 
               The circular board offers unique pathways that conventional grids lack.
             </p>
-            <div className="flex gap-8 mt-2">
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-8 mt-2">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-[var(--accent-secondary)]"></div>
-                <span className="text-[10px] tracking-widest uppercase font-bold">Player X (Interceptor)</span>
+                <span className="text-[9px] sm:text-[10px] tracking-widest uppercase font-bold">Player X (Interceptor)</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full border border-[var(--accent-primary)]"></div>
-                <span className="text-[10px] tracking-widest uppercase font-bold">Player O (Orbiter)</span>
+                <span className="text-[9px] sm:text-[10px] tracking-widest uppercase font-bold">Player O (Orbiter)</span>
               </div>
             </div>
           </div>
 
           <div className="flex flex-col gap-6">
-            <h3 className="text-xs tracking-[0.3em] uppercase font-bold text-[var(--accent-secondary)] text-center">Win Conditions</h3>
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <h3 className="text-[10px] sm:text-xs tracking-[0.3em] uppercase font-bold text-[var(--accent-secondary)] text-center">Win Conditions</h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 px-2 sm:px-0">
               <MiniBoard 
                 title="Radial" 
                 description="4 aligned center to edge" 
@@ -253,7 +253,7 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
 
         <button
           onClick={handleClose}
-          className="group flex flex-col items-center gap-2 mt-4"
+          className="group flex flex-col items-center gap-2 mt-4 p-4"
         >
           <span className="text-[var(--text-dim)] text-[10px] tracking-[0.3em] uppercase font-bold group-hover:text-[var(--text-main)] transition-colors">
             Dismiss Briefing
