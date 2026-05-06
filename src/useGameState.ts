@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { WIN_CONDITIONS, COORDINATES } from './constants';
 import type { LocationKey, Player, BoardState, Difficulty } from './constants';
-import { getBestMove } from './ai';
 
 export type GameMode = '1p' | '2p' | 'online';
 
@@ -66,19 +65,24 @@ export const useGameState = () => {
       isAiThinkingRef.current = true;
       setIsAiThinking(true);
       
-      const timer = setTimeout(() => {
-        const currentBoard = { ...board };
-        const bestMove = getBestMove(currentBoard, difficulty);
-        
+      const worker = new Worker(new URL('./ai.worker.ts', import.meta.url), { type: 'module' });
+      
+      worker.onmessage = (e) => {
+        const bestMove = e.data;
         if (bestMove) {
           playMove(bestMove, true);
         }
-        
         isAiThinkingRef.current = false;
         setIsAiThinking(false);
-      }, 400);
+        worker.terminate();
+      };
+
+      worker.postMessage({ board, difficulty });
+
       return () => {
-        clearTimeout(timer);
+        worker.terminate();
+        isAiThinkingRef.current = false;
+        setIsAiThinking(false);
       };
     }
   }, [gameMode, turn, winner, board, playMove, difficulty]);
