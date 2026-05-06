@@ -1,5 +1,5 @@
-const RINGS = [60, 120, 175, 230] as const;
-const SLICES = 8;
+export const RINGS = [60, 120, 175, 230] as const;
+export const SLICES = 8;
 
 const generateCoordinates = () => {
   const coords: Record<string, [number, number]> = {};
