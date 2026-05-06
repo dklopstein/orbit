@@ -78,6 +78,7 @@ const MiniBoard: React.FC<{ winningMoves: string[], title: string, description: 
           stroke="var(--text-main)"
           strokeWidth="1"
           strokeDasharray="2 2"
+          className="animate-[dash-rules_2s_linear_infinite]"
         />
         {winningMoves.map(renderCell)}
       </svg>
@@ -176,9 +177,9 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
             d={getLargeWinPath()}
             fill="none"
             stroke="var(--text-main)"
-            strokeWidth="2"
-            strokeDasharray="8 8"
-            className="animate-[dash_2s_linear_infinite]"
+            strokeWidth="1"
+            strokeDasharray="4 4"
+            className="animate-[dash-rules_2s_linear_infinite]"
           />
           {expandedWin.moves.map(renderLargeCell)}
         </svg>
@@ -186,11 +187,6 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
         <span className="mt-8 text-[var(--text-dim)] text-[10px] tracking-[0.4em] uppercase font-bold animate-pulse text-center">
           Click anywhere to minimize
         </span>
-        <style>{`
-          @keyframes dash {
-            to { stroke-dashoffset: -32; }
-          }
-        `}</style>
       </div>
     );
   };
@@ -266,6 +262,11 @@ const RulesOverlay: React.FC<RulesOverlayProps> = ({ onClose }) => {
         </button>
       </div>
       {renderEnlargedBoard()}
+      <style>{`
+        @keyframes dash-rules {
+          to { stroke-dashoffset: -32; }
+        }
+      `}</style>
     </div>
   );
 };
